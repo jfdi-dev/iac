@@ -1,0 +1,7 @@
+runtime: nodejs18.x
+memory_size: 128
+timeout: 1000
+iam_role_statements:
+  - effect: allow
+    actions: ["s3:ListBuckets"]
+    resources: ["www.mybucket.com"]

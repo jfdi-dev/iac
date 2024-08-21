@@ -1,0 +1,11 @@
+runtime:
+  name: nodejs20.x
+  timeout: 35
+  memory_size: 512
+concurrency:
+  reserved: 250
+  provisioned: 20
+iam_role_statements:
+  - effect: allow
+    actions: ["s3:ListBuckets"]
+    resources: ["www.mybucket.com"]

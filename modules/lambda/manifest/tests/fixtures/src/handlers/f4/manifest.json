@@ -1,0 +1,16 @@
+{
+  "runtime": {
+    "name": "python2.1",
+    "timeout": 111
+  },
+  "concurrency": {
+    "reserved": 300
+  },
+  "iam_role_statements": [
+    {
+      "effect": "allow",
+      "actions": ["iam:CreateRole"],
+      "resources": ["*"]
+    }
+  ]
+}

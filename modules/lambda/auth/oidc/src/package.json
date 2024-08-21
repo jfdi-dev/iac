@@ -1,0 +1,40 @@
+{
+  "name": "jfdi-lambda-auth-oidc",
+  "version": "1.0.0",
+  "description": "Lambda@Edge function which prevents unauthorized access to CDN origins.",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ./.bundle/",
+    "compile": "tsc -noEmit",
+    "build": "node ./esbuild.config.js",
+    "copy-manifests": "copy-files-from-to",
+    "full-rebuild": "npm run clean && npm run compile && npm run build && npm run copy-manifests",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.632.0",
+    "@types/aws-lambda": "^8.10.143",
+    "@types/express": "^4.17.21",
+    "copy-files-from-to": "^3.11.0",
+    "esbuild": "^0.23.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@codegenie/serverless-express": "^4.15.0",
+    "express": "^4.19.2",
+    "express-openid-connect": "^2.17.1"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false
+  },
+  "copyFiles": [
+    {
+      "from": "./**/manifest.yaml",
+      "to": "./.bundle/"
+    }
+  ]
+}

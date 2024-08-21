@@ -1,0 +1,4 @@
+iam_role_statements:
+  - effect: "allow"
+    actions: ["s3:CreateBucket"]
+    resources: ["docs.mybucket.com"]

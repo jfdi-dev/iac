@@ -1,0 +1,5 @@
+runtime:
+  name: nodejs18.x
+  memory_size: 1024
+concurrency:
+  provisioned: 25
