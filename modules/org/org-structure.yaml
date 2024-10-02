@@ -1,0 +1,25 @@
+services:
+  type: unit
+  name: Services
+  shortcode: svc
+  children:
+    networking:
+    tooling:
+      policy: DelegateOrgStructureDiscovery
+    security:
+operational:
+  type: unit
+  name: Operational Workloads
+  shortcode: ops
+  children:
+    development:
+    staging:
+    production:
+analytical:
+  type: unit
+  name: Analytical Workloads
+  shortcode: data
+  children:
+    development:
+    staging:
+    production:

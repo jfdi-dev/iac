@@ -7,6 +7,7 @@ node_modules/
 *.tfstate.*
 *.tfvars
 .terraform.tfstate.lock.info
+.terraform.lock.hcl
 
 .dist/
 .bundle/

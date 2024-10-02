@@ -22,7 +22,7 @@ module "petstore_app" {
   disaster_recovery_level = "bronze"
 
   statics = {
-    www = {
+    app = {
       path = "*"
       src = "./src/static/"
     }
