@@ -1,4 +1,8 @@
 
 locals {
-  manifest = yamldecode(var.manifest_path)
+  defaults = {
+    
+  }
+  manifest = yamldecode(file(var.manifest_path))
+  values = merge(local.defaults, local.manifest)
 }

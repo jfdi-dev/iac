@@ -14,6 +14,10 @@ locals {
     length(local.non_prefixed_origin) > 0 ? local.non_prefixed_origin[0] : null, 
     length(local.origins) > 0 ? local.origins[0] : null
   )
+
+  domain_parts = split(".", var.fqdn)
+  domain_without_subdomain = slice(local.domain_parts, 1, length(local.domain_parts))
+  zone_name = join(".", local.domain_without_subdomain)
 }
 
 module "oidc_lambda" {
@@ -45,7 +49,41 @@ resource "aws_acm_certificate" "tls_cert" {
   }
 }
 
+data "aws_route53_zone" "zone" {
+  name = local.zone_name
+  private_zone = false
+}
+
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.tls_cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.zone.id
+}
+
+resource "aws_acm_certificate_validation" "tls_cert" {
+  provider = aws.tls
+  certificate_arn         = aws_acm_certificate.tls_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+# data "aws_cloudfront_cache_policy" "caching_optimized" {
+#   name = "Managed-CachingOptimized"
+# }
+
 resource "aws_cloudfront_distribution" "cdn" {
+
+  depends_on = [  aws_acm_certificate_validation.tls_cert ]
   
   dynamic "origin" {
     for_each = local.origins
@@ -57,25 +95,27 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  aliases = [ var.fqdn ]
+
   enabled = true
   is_ipv6_enabled = true
   default_root_object = local.has_static ? "index.html" : null
 
   logging_config {
     include_cookies = false
-    bucket = "logs.${var.fqdn}"
+    # Why the suffix is required, I have no idea...
+    bucket = "logs.${var.fqdn}.s3.amazonaws.com" 
   }
 
   # TODO: This should apply to the only non-prefixed static/api
   default_cache_behavior {
+    # Todo: get the data lookup working
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" #data.aws_cloudfront_cache_policy.caching_optimized.id
     allowed_methods = [ "GET", "HEAD" ]
     cached_methods = [ "GET", "HEAD" ]
     target_origin_id = local.default_origin.fqdn
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl = 0
-    default_ttl = 3600
-    max_ttl = 86400
 
     dynamic "lambda_function_association" {
       for_each = module.oidc_lambda
@@ -117,4 +157,25 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   # todo: set this via var?
   price_class = "PriceClass_100"
+}
+
+data aws_iam_policy_document bucket_policy {
+  statement {
+    principals {
+      type = "Service"
+      identifiers = [ "cloudfront.amazonaws.com" ]
+    }
+    actions = [ "s3:GetObject" ]
+    resources = [ "arn:aws:s3:::${var.fqdn}/*" ]
+    condition {
+      test = "StringEquals"
+      variable = "AWS:SourceArn"
+      values = [ aws_cloudfront_distribution.cdn.arn ]
+    }
+  }
+}
+
+resource aws_s3_bucket_policy content {
+  bucket = var.fqdn
+  policy = data.aws_iam_policy_document.bucket_policy.json
 }

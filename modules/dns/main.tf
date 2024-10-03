@@ -15,20 +15,20 @@ locals {
   zone_name = join(".", local.domain_without_subdomain)
 }
 
-# data "aws_route53_zone" "zone" {
-#   name = local.zone_name
-#   private_zone = false
-# }
-
-resource "aws_route53_zone" "zone" {
-  name = local.zone_name 
+data "aws_route53_zone" "zone" {
+  name = local.zone_name
+  private_zone = false
 }
+
+# resource "aws_route53_zone" "zone" {
+#   name = local.zone_name 
+# }
 
 resource "aws_route53_record" "alias" {
   name = var.fqdn
-  zone_id = aws_route53_zone.zone.zone_id
+  zone_id = data.aws_route53_zone.zone.zone_id
   type = "A"
-
+  
   alias {
     name = local.alias.name
     zone_id = local.alias.zone_id

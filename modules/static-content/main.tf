@@ -18,6 +18,14 @@ resource "aws_s3_bucket_logging" "logging" {
   target_prefix = "logs/"
 }
 
+resource "aws_s3_bucket_ownership_controls" "logging" {
+  bucket = aws_s3_bucket.logs.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred" 
+  }
+}
+
 resource "aws_s3_bucket_public_access_block" "block" {
   bucket = aws_s3_bucket.content.id
 
@@ -33,6 +41,15 @@ resource "aws_s3_bucket_versioning" "versioning" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "logging" {
+  bucket = aws_s3_bucket.logs.id
+
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
 }
 
 #
@@ -80,3 +97,4 @@ resource "aws_s3_bucket_versioning" "versioning" {
 #   bucket = aws_s3_bucket.content
 #   policy = data.aws_iam_policy_document.policy.json
 # }
+

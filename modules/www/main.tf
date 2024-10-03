@@ -3,19 +3,14 @@ provider aws {
 }
 
 provider aws {
-  alias = north-virginia
+  alias = "north-virginia"
   region = "us-east-1"
 }
 
-
 module manifest {
   source = "../artifact-manifest"
-}
 
-module "dr" {
-  source = "../disaster-recovery"
-
-  level = module.manifest.disaster_recovery_level
+  manifest_path = var.manifest_path
 }
 
 module project-context {
@@ -23,23 +18,39 @@ module project-context {
 }
 
 locals {
-  fqdn = "${module.manifest.artifact}.${module.project-context.env}.${module.project-context.tldp1}"
+  config = merge(module.project-context.value, module.manifest.value)
+  fqdn = "${local.config.artifact}.${local.config.env}.${local.config.tldp1}"
+}
+
+module dr-from-env {
+  source = "../dr-from-env"
+
+  env = local.config.env
+}
+
+module "dr" {
+  source = "../disaster-recovery"
+
+  level = module.dr-from-env.level
 }
 
 module static {
   source = "../static-content"
 
-  name = module.manifest.artifact
+  name = local.fqdn
   dr = module.dr
 }
 
 module cdn {
+  depends_on = [ module.static ]
+
   providers = {
     aws.tls = aws.north-virginia
     aws.edge = aws.north-virginia
   }
   source = "../cdn"
 
+  protected = false
   fqdn = local.fqdn
   
   static = [
@@ -50,6 +61,10 @@ module cdn {
 }
 
 module dns {
+  depends_on = [ 
+    module.cdn
+   ]
+
   source = "../dns"
 
   fqdn = local.fqdn
