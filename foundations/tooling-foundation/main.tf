@@ -48,8 +48,8 @@ module project_context {
   }
 
   terraform = {
-    state = module.tf_state.tf_state_s3_bucket_arn
-    locks = module.tf_state.tf_state_locks_dynamodb_table_arn
+    state = module.tf_state.tf_state_s3_bucket_name
+    locks = module.tf_state.tf_state_locks_dynamodb_table_name
   }
   
   tooling_account = local.tooling_account
