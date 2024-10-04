@@ -28,6 +28,7 @@ resource aws_ssm_parameter project_context {
     }
     regions = var.regions
     tldp1 = var.tldp1
+    terraform = var.terraform
   })
 }
 

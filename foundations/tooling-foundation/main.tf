@@ -4,7 +4,7 @@ data aws_caller_identity current {}
 data aws_region region {}
 
 module accounts {
-  source = "../account-lookup"
+  source = "../../modules/account-lookup"
 
   project = var.project
 }
@@ -21,13 +21,13 @@ locals {
 }
 
 module tf_state {
-  source = "../tf-s3-state"
+  source = "../../modules/tf-s3-state"
 
   project = var.project
 }
 
 module ci_oidc {
-  source = "../github-oidc"
+  source = "../../modules/github-oidc"
 
   project = var.project
 
@@ -37,7 +37,7 @@ module ci_oidc {
 }
 
 module project_context {
-  source = "../project-context/writer"
+  source = "../../modules/project-context/writer"
 
   project = var.project
   tldp1 = var.tldp1
@@ -45,6 +45,11 @@ module project_context {
   regions = {
     primary = local.primary_region
     secondary = var.secondary_region
+  }
+
+  terraform = {
+    state = module.tf_state.tf_state_s3_bucket_arn
+    locks = module.tf_state.tf_state_locks_dynamodb_table_arn
   }
   
   tooling_account = local.tooling_account

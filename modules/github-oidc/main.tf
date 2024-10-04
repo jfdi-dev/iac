@@ -54,6 +54,20 @@ resource "aws_iam_role" "github-ci" {
 
 data aws_organizations_organization org {}
 
+data aws_caller_identity current {}
+
+data aws_region current {}
+
+data aws_iam_policy_document get_project_context {
+  statement {
+    effect = "Allow"
+    actions = [ "ssm:GetParameter" ]
+    resources = [
+      "arn:aws:ssm:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:parameter/project_context"
+    ]
+  }
+}
+
 data aws_iam_policy_document assume_other_roles {
   statement {
     effect = "Allow"
@@ -78,6 +92,11 @@ resource aws_iam_policy assume_other_roles {
   policy = data.aws_iam_policy_document.assume_other_roles.json
 }
 
+resource aws_iam_policy get_project_context {
+  name = "get-project-context"
+  policy = data.aws_iam_policy_document.get_project_context.json
+}
+
 resource aws_iam_policy list_accounts {
   name = "list-accounts"
   policy = data.aws_iam_policy_document.list_accounts.json
@@ -86,6 +105,11 @@ resource aws_iam_policy list_accounts {
 resource aws_iam_role_policy_attachment assume_other_roles {
   role = aws_iam_role.github-ci.name
   policy_arn = aws_iam_policy.assume_other_roles.arn
+}
+
+resource aws_iam_role_policy_attachment get_project_context {
+  role = aws_iam_role.github-ci.name
+  policy_arn = aws_iam_policy.get_project_context.arn
 }
 
 resource aws_iam_role_policy_attachment list_accounts {

@@ -34,3 +34,11 @@ variable prod_account {
 variable regions {
   type = map(string)
 }
+
+variable terraform {
+  type = object({
+    state = string
+    locks = string
+  })
+  nullable = false
+}
