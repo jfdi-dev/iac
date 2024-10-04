@@ -5,22 +5,12 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 }
 
-module tf-state-access-policies {
-  source = "../tf-state-access"
-
-  project = var.project
-}
-
 module deployer-role {
   source = "../deployer-role"
-
-  depends_on = [ module.tf-state-access-policies ]
 
   project = var.project
   tooling_account = var.tooling_account
   artifact_name = "iam"
-
-  named_policies = module.tf-state-access-policies.policies
 
   attached_policies = {
     iam-deployer-policy = [ {

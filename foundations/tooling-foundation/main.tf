@@ -29,6 +29,11 @@ module tf_state {
 module ci_oidc {
   source = "../../modules/github-oidc"
 
+  terraform = {
+    s3 = module.tf_state.tf_state_s3_bucket_arn
+    dynamodb = module.tf_state.tf_state_locks_dynamodb_table_arn
+  }
+
   project = var.project
 
   github_owner = var.github_owner

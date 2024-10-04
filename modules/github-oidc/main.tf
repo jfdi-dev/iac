@@ -58,6 +58,13 @@ data aws_caller_identity current {}
 
 data aws_region current {}
 
+module tf-state-access-policies {
+  source = "../tf-state-access"
+
+  s3_bucket_name = var.terraform.s3
+  dynamo_table_name = var.terraform.dynamodb
+}
+
 data aws_iam_policy_document get_project_context {
   statement {
     effect = "Allow"
@@ -115,4 +122,11 @@ resource aws_iam_role_policy_attachment get_project_context {
 resource aws_iam_role_policy_attachment list_accounts {
   role = aws_iam_role.github-ci.name
   policy_arn = aws_iam_policy.list_accounts.arn
+}
+
+resource aws_iam_role_policy_attachment terraform_state {
+  for_each = module.tf-state-access-policies.policy_arns
+
+  role = aws_iam_role.github-ci.name
+  policy_arn = each.value
 }

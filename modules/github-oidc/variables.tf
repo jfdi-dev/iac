@@ -9,6 +9,14 @@ variable ci-role {
   default = "github-ci"
 }
 
+variable terraform {
+  type = object({
+    s3 = string
+    dynamodb = string
+  })
+  nullable = false
+}
+
 variable github_owner {
   type = string
   nullable = true

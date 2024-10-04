@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "policies" {
 
 resource "aws_iam_policy" "policies" {
   for_each = { for idx, policy in data.aws_iam_policy_document.policies: idx => policy }
-  name = "${each.key}-policy" # not going to pretend I understand why the index of the policy document in the name of the policy in vars...
+  name = each.key
   policy = each.value.json
 }
 

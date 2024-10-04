@@ -1,20 +1,20 @@
 
 
 module project-context {
-  source = "../project-context/reader"
+  source = "../../modules/project-context/reader"
 
   is_tooling = var.is_tooling
 }
 
 module iam-deployer-role {
-  source = "../iam-deployer-role"
+  source = "../../modules/iam-deployer-role"
   
   project = module.project-context.value.project
   tooling_account = module.project-context.value.accounts.tooling
 }
 
 module dns-delegate {
-  source = "../dns/delegate"
+  source = "../../modules/dns_copy/delegate"
 
   count = var.subdomain == null ? 0 : 1
 
