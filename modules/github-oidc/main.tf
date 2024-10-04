@@ -61,8 +61,8 @@ data aws_region current {}
 module tf-state-access-policies {
   source = "../tf-state-access"
 
-  s3_bucket_name = var.terraform.s3
-  dynamo_table_name = var.terraform.dynamodb
+  s3_bucket_arn = var.terraform.s3
+  dynamo_table_arn = var.terraform.dynamodb
 }
 
 data aws_iam_policy_document get_project_context {

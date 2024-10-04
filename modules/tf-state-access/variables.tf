@@ -1,7 +1,7 @@
-variable s3_bucket_name {
+variable s3_bucket_arn {
   type = string
 }
 
-variable dynamo_table_name {
+variable dynamo_table_arn {
   type = string
 }

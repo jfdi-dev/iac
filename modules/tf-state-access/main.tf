@@ -14,8 +14,8 @@ data aws_iam_policy_document tf_state_s3_bucket_access {
       "s3:PutObject"
     ]
     resources = [ 
-      "arn:aws:s3:::${var.s3_bucket_name}",
-      "arn:aws:s3:::${var.s3_bucket_name}/*",
+      var.s3_bucket_arn,
+      "${var.s3_bucket_arn}/*",
     ]
   }
 }
@@ -35,7 +35,7 @@ data aws_iam_policy_document tf_state_dynamodb_table_access {
       "dynamodb:DeleteItem"
     ]
     resources = [
-      "arn:aws:dynamodb:*:*:table/${var.dynamo_table_name}"
+      var.dynamo_table_arn
     ]
   }
 }
