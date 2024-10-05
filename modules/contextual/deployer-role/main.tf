@@ -1,3 +1,7 @@
+terraform {
+  backend s3 {
+  }
+}
 
 module project-context {
   source = "../../project-context/reader"
