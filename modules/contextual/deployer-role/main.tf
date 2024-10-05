@@ -9,8 +9,6 @@ module project-context {
 
 module manifest {
   source = "../../artifact-manifest"
-
-  manifest_path = "../manifest.yml"
 }
 
 module deployer-role {
