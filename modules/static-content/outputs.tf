@@ -7,6 +7,10 @@ output "fqdn" {
   value = aws_s3_bucket.content.bucket_regional_domain_name
 }
 
+output bucket_name {
+  value = aws_s3_bucket.content.bucket
+}
+
 output "bucket_id" {
   value = aws_s3_bucket.content.id
 }
