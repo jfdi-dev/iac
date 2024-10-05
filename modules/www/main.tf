@@ -1,11 +1,12 @@
-provider aws {
-
+terraform {
+  backend s3 {
+  }
 }
 
-provider aws {
-  alias = "north-virginia"
-  region = "us-east-1"
-}
+# provider aws {
+#   alias = "north-virginia"
+#   region = "us-east-1"
+# }
 
 module manifest {
   source = "../artifact-manifest"
