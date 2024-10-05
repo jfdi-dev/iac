@@ -3,13 +3,13 @@ data aws_caller_identity current {}
 
 locals {
   managed_policy_arns = tomap({
-    for key, managed_policy_name in var.managed_policies: 
-    key => "arn:aws:iam::aws:policy/${managed_policy_name}"
+    for managed_policy_name in var.policies.managed: 
+    managed_policy_name => "arn:aws:iam::aws:policy/${managed_policy_name}"
   })
 
   named_policy_arns = tomap({
-    for key, named_policy_name in var.named_policies:
-    key => "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${named_policy_name}"
+    for named_policy_name in var.policies.named:
+    named_policy_name => "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${named_policy_name}"
   })
 
   assume-role-policy = jsonencode({
@@ -36,7 +36,7 @@ output "deployment-role-arn" {
 }
 
 data "aws_iam_policy_document" "policies" {
-  for_each = var.attached_policies
+  for_each = var.policies.custom
   dynamic "statement" {
     for_each = each.value
     content {

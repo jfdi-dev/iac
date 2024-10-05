@@ -11,21 +11,25 @@ variable artifact_name {
   type = string
 }
 
-variable attached_policies {
-  type = map(list(object({ 
-    effect = optional(string)
-    actions = optional(set(string))
-    resources = optional(set(string))
-  })))
-  default = {}
-}
-
-variable named_policies {
-  type = map(string)
-  default = {}
-}
-
-variable managed_policies {
-  type = map(string)
-  default = {}
+variable policies {
+  type = object({
+    custom = optional(
+      map(
+        list(
+          object({
+            effect = string
+            actions = set(string)
+            resources = set(string)
+          })
+        )
+      )
+    )
+    named = optional(set(string))
+    managed = optional(set(string))
+  })
+  default = {
+    custom = {}
+    named = []
+    managed = []
+  }
 }
