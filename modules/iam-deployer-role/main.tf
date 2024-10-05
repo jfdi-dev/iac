@@ -16,6 +16,7 @@ module deployer-role {
 		custom = {
 			iam-deployer = [
 				{
+					effect = "Allow"
 					actions = [
 						"iam:*"
 					]
