@@ -19,13 +19,13 @@ module project-context {
 
 locals {
   config = merge(module.project-context.value, module.manifest.value)
-  fqdn = "${local.config.artifact}.${local.config.env}.${local.config.tldp1}"
+  fqdn = "${local.config.artifact}.${module.project-context.env}.${local.config.tldp1}"
 }
 
 module dr-from-env {
   source = "../dr-from-env"
 
-  env = local.config.env
+  env = module.project-context.env
 }
 
 module "dr" {

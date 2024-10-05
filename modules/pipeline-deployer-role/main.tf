@@ -17,7 +17,9 @@ module deployer-role {
   artifact_name = module.artifact-manifest.value.artifact
   tooling_account = module.project-context.value.accounts.tooling
 
-  attached_policies = module.artifact-manifest.value.deployment.permissions
-  named_policies = module.artifact-manifest.value.deployment.name_policies
-  managed_policies = modue.artifact-manifest.value.deployment.managed_policies
+  policies = {
+    custom = module.artifact-manifest.value.deployment.permissions
+    named = module.artifact-manifest.value.deployment.name_policies
+    managed = modue.artifact-manifest.value.deployment.managed_policies
+  }
 }

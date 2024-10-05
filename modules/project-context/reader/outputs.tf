@@ -1,4 +1,8 @@
 
 output value {
-  value = jsondecode(data.aws_ssm_parameter.project_context.insecure_value)
+  value = local.project_context
+}
+
+output env {
+  value = local.env
 }
