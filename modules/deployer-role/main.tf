@@ -47,7 +47,7 @@ data aws_region current {}
 data aws_iam_policy_document read-project-context {
   statement {
     effect = "Allow"
-    actions = [ "ram:ResourceGetShares" ]
+    actions = [ "ram:GetResourceShares" ]
     resources = [ "arn:aws:ram:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:resource-share/*" ]
   }
 
