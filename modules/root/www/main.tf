@@ -18,13 +18,13 @@ provider aws {
 }
 
 module manifest {
-  source = "../artifact-manifest"
+  source = "../../artifact-manifest"
 
   manifest_path = var.manifest_path
 }
 
 module project-context {
-  source = "../project-context/reader"
+  source = "../../project-context/reader"
 }
 
 locals {
@@ -33,19 +33,19 @@ locals {
 }
 
 module dr-from-env {
-  source = "../dr-from-env"
+  source = "../../dr-from-env"
 
   env = module.project-context.env
 }
 
 module "dr" {
-  source = "../disaster-recovery"
+  source = "../../disaster-recovery"
 
   level = module.dr-from-env.level
 }
 
 module static {
-  source = "../static-content"
+  source = "../../static-content"
 
   name = local.fqdn
   dr = module.dr
@@ -58,7 +58,7 @@ module cdn {
     aws.tls = aws.north-virginia
     aws.edge = aws.north-virginia
   }
-  source = "../cdn"
+  source = "../../cdn"
 
   protected = false
   fqdn = local.fqdn
@@ -75,7 +75,7 @@ module dns {
     module.cdn
    ]
 
-  source = "../dns"
+  source = "../../dns"
 
   fqdn = local.fqdn
   alias_to = module.cdn
