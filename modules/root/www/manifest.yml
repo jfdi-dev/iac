@@ -1,0 +1,48 @@
+artifact: www
+deployment:
+  policies:
+    custom:
+      deploy-spa:
+        - effect: Allow
+          actions: 
+            - s3:*
+          resources:
+            - '*'
+        - effect: Allow
+          actions:
+            - cloudfront:GetInvalidation
+            - cloudfront:CreateInvalidation
+            - cloudfront:CreateOriginAccessControl
+            - cloudfront:GetOriginAccessControl
+            - cloudfront:DeleteOriginAccessControl 
+            - cloudfront:CreateDistribution 
+            - cloudfront:UpdateDistribution 
+            - cloudfront:GetDistribution 
+            - cloudfront:DeleteDistribution 
+            - cloudfront:TagResource
+            - cloudfront:ListTagsForResource 
+          resources:
+            - '*'
+        - effect: Allow
+          actions:
+            - acm:RequestCertificate
+            - acm:DescribeCertificate
+            - acm:ListTagsForCertificate 
+            - acm:DeleteCertificate
+          resources:
+            - arn:aws:acm:us-east-1:*:certificate/*
+        - effect: Allow
+          actions:
+            - route53:CreateHostedZone
+            - route53:UpdateHostedZoneComment
+            - route53:GetHostedZone
+            - route53:ListHostedZones
+            - route53:DeleteHostedZone
+            - route53:ChangeResourceRecordSets
+            - route53:ListResourceRecordSets
+            - route53:GetHostedZoneCount
+            - route53:ListHostedZonesByName
+            - route53:ListTagsForResource
+            - route53:GetChange
+          resources:
+            - '*'
