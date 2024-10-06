@@ -3,6 +3,13 @@ terraform {
   }
 }
 
+
+provider aws {
+  assume_role {
+    role_arn = var.role
+  }
+}
+
 module project-context {
   source = "../../project-context/reader"
 }

@@ -3,10 +3,19 @@ terraform {
   }
 }
 
-# provider aws {
-#   alias = "north-virginia"
-#   region = "us-east-1"
-# }
+provider aws {
+  assume_role {
+    role_arn = var.role
+  }
+}
+
+provider aws {
+  alias = "north-virginia"
+  region = "us-east-1"
+  assume_role {
+    role_arn = var.role
+  }
+}
 
 module manifest {
   source = "../artifact-manifest"
