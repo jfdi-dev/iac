@@ -70,7 +70,9 @@ module "cdn" {
   static = [ 
     for name, static in var.statics: 
       {
+        # just pass in the module???
         fqdn = module.statics[name].fqdn
+        bucket_name = module.statics[name].bucket_name
         path = static.path
       }
   ]

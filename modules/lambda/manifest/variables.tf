@@ -23,8 +23,8 @@ variable "defaults" {
   default = {
     runtime = {
       name = "nodejs20.x"
-      timeout = 30
-      memory_size = 512
+      timeout = 5
+      memory_size = 128
     }
     concurrency = {
       provisioned = 0

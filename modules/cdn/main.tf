@@ -29,11 +29,11 @@ module "oidc_lambda" {
   }
 }
 
-resource "aws_cloudfront_origin_access_control" "oac" {
-  for_each = { for idx, origin in local.origins: idx => origin }
+resource "aws_cloudfront_origin_access_control" "static_oac" {
+  for_each = { for idx, origin in local.statics: idx => origin }
 
-  name = "oac.${each.value.fqdn}"
-  origin_access_control_origin_type = each.value.type == "static" ? "s3" : "lambda"
+  name = "s.oac.${each.value.fqdn}"
+  origin_access_control_origin_type = "s3"
   signing_behavior = "always"
   signing_protocol = "sigv4"
 }
@@ -86,12 +86,31 @@ resource "aws_cloudfront_distribution" "cdn" {
   depends_on = [  aws_acm_certificate_validation.tls_cert ]
   
   dynamic "origin" {
-    for_each = local.origins
+    for_each = local.statics
 
     content {
       domain_name = origin.value.fqdn
-      origin_access_control_id = aws_cloudfront_origin_access_control.oac[origin.key].id
+      origin_access_control_id = aws_cloudfront_origin_access_control.static_oac[origin.key].id
       origin_id = origin.value.fqdn
+    }
+  }
+
+  dynamic "origin" {
+    for_each = local.apis
+
+    content {
+      # move this to rest api outputs
+      domain_name = replace(origin.value.fqdn, "/^https?://([^/]*).*/", "$1")
+      origin_id = origin.value.fqdn
+      # make this a param
+      origin_path = "/dev"
+
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
     }
   }
 
@@ -101,11 +120,11 @@ resource "aws_cloudfront_distribution" "cdn" {
   is_ipv6_enabled = true
   default_root_object = local.has_static ? "index.html" : null
 
-  logging_config {
-    include_cookies = false
-    # Why the suffix is required, I have no idea...
-    bucket = "logs.${var.fqdn}.s3.amazonaws.com" 
-  }
+  # logging_config {
+  #   include_cookies = false
+  #   # Why the suffix is required, I have no idea...
+  #   bucket = "logs.${var.fqdn}.s3.amazonaws.com" 
+  # }
 
   # TODO: This should apply to the only non-prefixed static/api
   default_cache_behavior {
@@ -140,6 +159,13 @@ resource "aws_cloudfront_distribution" "cdn" {
       cached_methods = [ "GET", "HEAD" ]
       target_origin_id = api.value.fqdn
       viewer_protocol_policy = "https-only"
+
+      forwarded_values {
+        query_string = true
+        cookies {
+          forward = "all"
+        }
+      }
     }
   }
 
@@ -161,8 +187,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
 data aws_iam_policy_document bucket_policy {
   for_each = {
-    for static in local.statics:
-    static.fqdn => static.fqdn
+    for idx, static in local.statics:
+    idx => static.bucket_name
   }
   statement {
     principals {
@@ -171,7 +197,7 @@ data aws_iam_policy_document bucket_policy {
     }
     actions = [ "s3:GetObject" ]
     resources = [ 
-      "arn:aws:s3:::${each.key}/*" 
+      "arn:aws:s3:::${each.value}/*" 
     ]
     condition {
       test = "StringEquals"
@@ -183,9 +209,9 @@ data aws_iam_policy_document bucket_policy {
 
 resource aws_s3_bucket_policy content {
   for_each = {
-    for static in local.statics:
-    static.fqdn => static.fqdn
+    for idx, static in local.statics:
+    idx => static.bucket_name
   }
-  bucket = each.key
+  bucket = each.value
   policy = data.aws_iam_policy_document.bucket_policy[each.key].json
 }

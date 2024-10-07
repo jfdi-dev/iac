@@ -18,6 +18,7 @@ variable "protected" {
 variable "static" {
   type = list(object({
     fqdn = string
+    bucket_name = string
     path = optional(string, null)
   }))
   default = []
