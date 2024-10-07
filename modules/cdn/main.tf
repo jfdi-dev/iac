@@ -123,7 +123,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
       content {
         event_type = "viewer-request"
-        lambda_arn = edge_function.value.function.function.qualified_arn
+        lambda_arn = edge_function.value.function.qualified_arn
         include_body = false
       }
     }
