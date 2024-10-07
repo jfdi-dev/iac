@@ -10,4 +10,4 @@ node_modules/
 .terraform.lock.hcl
 
 .dist/
-.bundle/
+#.bundle/
