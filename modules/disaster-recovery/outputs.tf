@@ -14,3 +14,7 @@ output "is_gold" {
 output "is_at_least_silver" {
   value = local.is_at_least_silver
 }
+
+output level {
+  value = var.level
+}
