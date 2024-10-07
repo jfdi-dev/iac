@@ -5,7 +5,6 @@ terraform {
 }
 
 provider aws {
-  alias = "default"
   assume_role {
     role_arn = var.role
   }
@@ -52,7 +51,7 @@ module domain-service {
   source = "../../domain-service"
 
   providers = {
-    aws = aws.default
+    aws = aws
     aws.tls = aws.north-virginia
     aws.edge = aws.north-virginia
   }
