@@ -160,6 +160,10 @@ resource "aws_cloudfront_distribution" "cdn" {
 }
 
 data aws_iam_policy_document bucket_policy {
+  for_each = {
+    for static in local.statics:
+    static.fqdn => static.fqdn
+  }
   statement {
     principals {
       type = "Service"
@@ -167,8 +171,7 @@ data aws_iam_policy_document bucket_policy {
     }
     actions = [ "s3:GetObject" ]
     resources = [ 
-      for static in local.statics:
-      "arn:aws:s3:::${static.fqdn}/*" 
+      "arn:aws:s3:::${each.key}/*" 
     ]
     condition {
       test = "StringEquals"
@@ -184,5 +187,5 @@ resource aws_s3_bucket_policy content {
     static.fqdn => static.fqdn
   }
   bucket = each.key
-  policy = data.aws_iam_policy_document.bucket_policy.json
+  policy = data.aws_iam_policy_document.bucket_policy[each.key].json
 }
