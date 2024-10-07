@@ -18,4 +18,4 @@ service:
     api: 
       path: /api
       src: api/
-      spec: ./api/spec.yml
+      spec: spec.yml

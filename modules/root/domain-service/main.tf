@@ -63,5 +63,5 @@ module domain-service {
 
   statics = local.config.service.statics
   apis = local.config.service.apis
-  datastores = local.config.service.datastores
+  #datastores = local.config.service.datastores
 }
