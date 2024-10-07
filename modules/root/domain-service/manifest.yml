@@ -16,6 +16,6 @@ service:
       src: ui/
   apis:
     api: 
-      path: /api
+      path: '*'
       src: api/
       spec: spec.yml
