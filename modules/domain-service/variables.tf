@@ -14,6 +14,10 @@ variable "disaster_recovery_level" {
   nullable = false
 }
 
+variable env {
+  type = string
+}
+
 variable "statics" {
   type = map(object({
     path = string

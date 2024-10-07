@@ -12,3 +12,7 @@ variable "name" {
 variable "openapi_spec" {
   type = string
 }
+
+variable "env" {
+  type = string
+}

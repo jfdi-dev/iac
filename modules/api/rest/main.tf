@@ -85,6 +85,6 @@ resource "aws_api_gateway_stage" "stage" {
   rest_api_id = aws_api_gateway_rest_api.api.id
 
   # use env name ?
-  stage_name = "$default"
+  stage_name = var.env
 }
 

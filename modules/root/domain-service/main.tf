@@ -58,6 +58,7 @@ module domain-service {
 
   fqdn = local.fqdn
   protected = true
+  env = module.project-context.env
 
   disaster_recovery_level = module.dr.level
 
