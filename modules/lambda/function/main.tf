@@ -67,18 +67,18 @@ resource "aws_lambda_function" "lambda" {
 
   depends_on = [ data.archive_file.lambda ]
   
-  lifecycle {
-    precondition {
-      condition = fileexists(local.zip_path)
-      error_message = "The lambda archive file ('${local.zip_path}') must already exist"
-    }
+  # lifecycle {
+  #   # precondition {
+  #   #   condition = fileexists(local.zip_path)
+  #   #   error_message = "The lambda archive file ('${local.zip_path}') must already exist"
+  #   # }
 
-    # Really do need this, but can't without some `handler` fettling
-    # precondition {
-    #   condition = fileexists("${var.src}${var.handler}")
-    #   error_message = "The lambda handler ('${var.src}${var.handler}') does not exist"
-    # }
-  }
+  #   # Really do need this, but can't without some `handler` fettling
+  #   # precondition {
+  #   #   condition = fileexists("${var.src}${var.handler}")
+  #   #   error_message = "The lambda handler ('${var.src}${var.handler}') does not exist"
+  #   # }
+  # }
 
   function_name = var.name
   role = aws_iam_role.lambda_role.arn
