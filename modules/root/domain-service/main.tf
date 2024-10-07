@@ -51,7 +51,7 @@ module domain-service {
   source = "../../domain-service"
 
   providers = {
-    default = aws.default
+    default = aws
     aws.tls = aws.north-virginia
     aws.edge = aws.north-virginia
   }
