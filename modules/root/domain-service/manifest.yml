@@ -2,7 +2,7 @@ artifact: app
 deployment:
   policies:
     managed:
-      - AmazonRoute53DomainsFullAccess
+      - AmazonRoute53FullAccess
       - AWSLambda_FullAccess
       - IAMFullAccess
       - AmazonS3FullAccess
