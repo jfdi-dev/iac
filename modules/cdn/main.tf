@@ -166,7 +166,10 @@ data aws_iam_policy_document bucket_policy {
       identifiers = [ "cloudfront.amazonaws.com" ]
     }
     actions = [ "s3:GetObject" ]
-    resources = [ "arn:aws:s3:::${var.fqdn}/*" ]
+    resources = [ 
+      for static in local.statics:
+      "arn:aws:s3:::${static.fqdn}/*" 
+    ]
     condition {
       test = "StringEquals"
       variable = "AWS:SourceArn"
@@ -176,6 +179,10 @@ data aws_iam_policy_document bucket_policy {
 }
 
 resource aws_s3_bucket_policy content {
-  bucket = var.fqdn
+  for_each = {
+    for static in local.statics:
+    static.fqdn => static.fqdn
+  }
+  bucket = each.key
   policy = data.aws_iam_policy_document.bucket_policy.json
 }
