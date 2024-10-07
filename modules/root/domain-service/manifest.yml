@@ -1,0 +1,23 @@
+artifact: app
+deployment:
+  policies:
+    managed:
+      - AmazonRoute53DomainsFullAccess
+      - AWSLambda_FullAccess
+      - IAMFullAccess
+      - AmazonS3FullAccess
+      - AmazonAPIGatewayAdministrator
+      - AWSCertificateManagerFullAccess
+      - CloudFrontFullAccess
+service:
+  statics:
+    ui: 
+      path: '*'
+      src: ui/
+    x:
+      path: '112'
+  apis:
+    api: 
+      path: /api
+      src: api/
+      spec: ./api/spec.yml

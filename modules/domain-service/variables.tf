@@ -38,4 +38,6 @@ variable "datastores" {
     type = string
     src = string
   }))
+  nullable = true
+  default = {}
 }
