@@ -64,6 +64,8 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "lambda" {
+
+  depends_on = [ data.archive_file.lambda ]
   
   lifecycle {
     precondition {
