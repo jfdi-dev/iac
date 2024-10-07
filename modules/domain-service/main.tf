@@ -37,7 +37,7 @@ module "apis" {
 
   name = each.key
   openapi_spec = each.value.spec
-  basepath = each.value.src
+  basepath = "${path.root}${each.value.src}"
 }
 
 module "statics" {
