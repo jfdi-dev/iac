@@ -9,7 +9,7 @@ locals {
 }
 
 module managed_arns {
-  source = "../arn/iam/policy"
+  source = "../arn"
   for_each = local.policies.managed
 
   service = "iam"
