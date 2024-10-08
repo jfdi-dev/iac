@@ -13,7 +13,7 @@ module managed_arns {
   for_each = local.policies.managed
 
   service = "iam"
-  account = ""
+  account = "aws"
   region = ""
   resource_type = "policy"
   resource_id = each.value
@@ -25,7 +25,7 @@ module service_arns {
 
   service = "iam"
   region = ""
-  account = ""
+  account = "aws"
   resource_type = "policy"
   resource_id = "service-role/${each.value}"
 }
