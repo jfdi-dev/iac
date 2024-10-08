@@ -32,7 +32,7 @@ module service_arns {
 
 module named_arns {
   source = "../arn"
-  for_each = local.policies.managed
+  for_each = local.policies.named
 
   service = "iam"
   region = ""
@@ -53,29 +53,36 @@ data aws_iam_policy_document custom_policies {
 }
 
 resource aws_iam_policy custom_policies {
-  for_each = { for idx, policy in data.aws_iam_policy_document.custom_policies: idx => policy }
+  for_each = data.aws_iam_policy_document.custom_policies
 
   name = each.key
   policy = each.value.json
 }
 
-locals {
-  managed_policy_arns = module.managed_arns[*].value
-  named_policy_arns = module.named_arns[*].value
-  service_policy_arns = module.service_arns[*].value
-  custom_policy_arns = aws_iam_policy.custom_policies[*].value
-  all_policy_arns = concat(
-    local.custom_policy_arns,
-    local.named_policy_arns,
-    local.managed_policy_arns, 
-    local.service_policy_arns
-  )
+resource aws_iam_role_policy_attachment managed_policy_attachments {
+  for_each = module.managed_arns
+
+  role = var.identity
+  policy_arn = each.value.value
 }
 
-resource aws_iam_role_policy_attachment policy_attachments {
-  for_each = local.all_policy_arns
+resource aws_iam_role_policy_attachment named_policy_attachments {
+  for_each = module.named_arns
+
+  role = var.identity
+  policy_arn = each.value.value
+}
+
+resource aws_iam_role_policy_attachment service_policy_attachments {
+  for_each = module.service_arns
+
+  role = var.identity
+  policy_arn = each.value.value
+}
+
+resource aws_iam_role_policy_attachment custom_policy_attachments {
+  for_each = aws_iam_policy.custom_policies
 
   role = var.identity
   policy_arn = each.value.arn
 }
-
