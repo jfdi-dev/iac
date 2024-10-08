@@ -21,7 +21,7 @@ module managed_arns {
 
 module service_arns {
   source = "../arn"
-  for_each = local.policies.managed
+  for_each = local.policies.service
 
   service = "iam"
   region = ""
@@ -63,7 +63,7 @@ locals {
   managed_policy_arns = module.managed_arns[*].value
   named_policy_arns = module.named_arns[*].value
   service_policy_arns = module.service_arns[*].value
-  custom_policy_arns = aws_iam_policy.custom_policies[*].arn
+  custom_policy_arns = aws_iam_policy.custom_policies[*].value
   all_policy_arns = concat(
     local.custom_policy_arns,
     local.named_policy_arns,
