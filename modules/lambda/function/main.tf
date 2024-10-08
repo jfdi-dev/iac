@@ -1,16 +1,28 @@
 
+module "manifest" {
+  source = "../manifest"
+
+  path = "${var.src}${var.handler}"
+}
+
 locals {
   zip_path = "./.dist/${var.name}.zip"
   principal_identifiers = concat(
     ["lambda.amazonaws.com"], 
     var.edge_lambda ? ["edgelambda.amazonaws.com"] : []
   )
-}
 
-module "manifest" {
-  source = "../manifest"
+  policies = {
+    custom = coalesce(module.manifest.settings.policies.custom, {})
+    named = coalesce(module.manifest.settings.policies.named, [])
+    managed = coalesce(module.manifest.settings.policies.managed, [])
+  }
 
-  path = "${var.src}${var.handler}"
+
+  managed_policy_arns = tomap({
+    for managed_policy_name in local.policies.managed: 
+    managed_policy_name => "arn:aws:iam::aws:policy/${managed_policy_name}"
+  })
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -37,6 +49,14 @@ data "aws_iam_policy_document" "lambda_policies" {
       resources = statement.value["resources"]
     }
   }
+}
+
+
+resource aws_iam_role_policy_attachment managed_policies {
+  for_each = local.managed_policy_arns
+
+  role = aws_iam_role.lambda_role.name
+  policy_arn = each.value
 }
 
 resource "aws_iam_policy" "policies" {

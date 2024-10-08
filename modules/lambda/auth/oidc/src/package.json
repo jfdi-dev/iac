@@ -35,6 +35,10 @@
     {
       "from": "./**/manifest.yaml",
       "to": "./.bundle/"
+    },
+    {
+      "from": "./**/secret.json",
+      "to": "./.bundle/"
     }
   ]
 }

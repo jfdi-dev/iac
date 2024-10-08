@@ -32,6 +32,31 @@ variable "env_vars" {
   }
 }
 
+
+variable policies {
+  type = object({
+    custom = optional(
+      map(
+        list(
+          object({
+            effect = string
+            actions = set(string)
+            resources = set(string)
+          })
+        )
+      )
+    )
+    named = optional(set(string))
+    managed = optional(set(string))
+  })
+  default = {
+    custom = {}
+    named = []
+    managed = []
+  }
+}
+
+
 variable "permissions" {
   type = map(list(object({ 
     effect = optional(string)

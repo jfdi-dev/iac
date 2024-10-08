@@ -28,22 +28,31 @@ locals {
   ]
   # Every property is an object/list, and Terraform `merge` is not deep.
   # So, we need to explicitly merge/concat each property...
-  runtime = merge([ 
+  runtime = merge({}, [ 
     for manifest in local.p5: manifest.runtime
     if contains(keys(manifest), "runtime")    
   ]...)
-  concurrency = merge([
+  concurrency = merge({}, [
     for manifest in local.p5: manifest.concurrency
     if contains(keys(manifest), "concurrency")
   ]...)
-  permissions = concat([
+  permissions = concat([], [
     for manifest in local.p5: manifest.iam_role_statements
     if contains(keys(manifest), "iam_role_statements")
+  ]...)
+  policies = merge({
+    managed: []
+    named: []
+    custom: {}
+  }, [
+    for manifest in local.p5: manifest.policies
+    if contains(keys(manifest), "policies")
   ]...)
   # Construct final manifest
   manifest = {
     runtime = local.runtime
     concurrency = local.concurrency
     iam_role_statements = local.permissions 
+    policies = local.policies
   }
 }
