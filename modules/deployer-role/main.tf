@@ -52,7 +52,7 @@ module project_context_parameter_arn {
 module identity_policies {
   source = "../identity-policies"
 
-  identity = aws_iam_role.deployment-role.arn
+  identity = aws_iam_role.deployment-role.name
 
   policies = merge(var.policies,
   {
