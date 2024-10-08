@@ -71,7 +71,7 @@ module identity_policies {
         {
           effect = "Allow"
           actions = ["ssm:GetParameter"]
-          resource = [module.project_context_parameter_arn.value]
+          resources = [module.project_context_parameter_arn.value]
         }
       ]
     }

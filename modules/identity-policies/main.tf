@@ -53,7 +53,7 @@ data aws_iam_policy_document custom_policies {
 }
 
 resource aws_iam_policy custom_policies {
-  for_each = { for idx, policy in data.data.aws_iam_policy_document.custom_policies: idx => policy }
+  for_each = { for idx, policy in data.aws_iam_policy_document.custom_policies: idx => policy }
 
   name = each.key
   policy = each.value.json
