@@ -34,7 +34,7 @@ module local_resource_share_arn {
 module tooling_resource_share_arn {
   source = "../arn"
 
-  account_id = var.tooling_account
+  account = var.tooling_account
   service = "ram"
   resource_type = "resource-share"
   resource_id = "*"
@@ -43,7 +43,7 @@ module tooling_resource_share_arn {
 module project_context_parameter_arn {
   source = "../arn"
   
-  account_id = var.tooling_account
+  account = var.tooling_account
   service = "ssm"
   resource_type = "parameter"
   resource_id = module.project-context-name.parameter_name
