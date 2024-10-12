@@ -1,3 +1,5 @@
 policies:
   managed:
+    # This needs removing...
+    - SecretsManagerReadWrite
     - service-role/AWSLambdaBasicExecutionRole
