@@ -9,6 +9,8 @@ deployment:
       - AmazonAPIGatewayAdministrator
       - AWSCertificateManagerFullAccess
       - CloudFrontFullAccess
+      # This is for Auth submodule:
+      - SecretsManagerReadWrite
 service:
   statics:
     ui: 
