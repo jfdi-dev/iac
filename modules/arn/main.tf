@@ -12,3 +12,4 @@ locals {
 
   value = "arn:${local.partition}:${local.service}:${local.region}:${local.account}:${local.resource}"
 } 
+

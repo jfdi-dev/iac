@@ -1,7 +1,15 @@
 
 resource "local_file" "secret_name" {
-  content = jsonencode(var.secret)
-  filename = "${path.module}/src/.bundle/secret.json"
+  content = var.secret
+  filename = "${path.module}/src/.bundle/secret"
+}
+
+resource random_string edge_lambda {
+  length = 8
+  special = false
+  numeric = false
+  upper = true
+  lower = false
 }
 
 module "oidc_lambda" {
@@ -11,5 +19,5 @@ module "oidc_lambda" {
   
   edge_lambda = true
   src = "${path.module}/src/.bundle/"
-  name = "oidc-lambda"
+  name = "oidc-lambda-${random_string.edge_lambda.result}" 
 }

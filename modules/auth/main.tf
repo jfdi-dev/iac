@@ -1,13 +1,51 @@
+# provider aws {
+#   assume_role {
+#     role_arn = var.role
+#   }
+# }
+
+# provider auth0 {
+
+# }
 
 locals {
+  fqdn = var.fqdn
+  url = "https://${local.fqdn}/"
+  auth0_config_secret_name_prefix = "oidc-config"
+  #apis = var.apis
+  # apis = {
+  #   app = {
+  #     fqdn = "app.dev.bonemilllane.com/api"
+  #   }
+  # }
+  api = {
+    name = "app"
+    fqdn = "${local.fqdn}/api"
+  }
+  # statics = {
+  #   app = {
+  #     fqdn = "app.dev.bonemilllane.com"
+  #   }
+  # }
+  static = {
+    name = "app"
+    fqdn = local.fqdn
+  }
+}
+
+# resource auth0_tenant env_tenant {
+
+# }
+
+data auth0_tenant tenant {
 
 }
 
 resource "auth0_resource_server" "api" {
-  for_each = var.apis
+  #for_each = local.apis
 
-  name = "${each.key}-api"
-  identifier = "${each.value.fqdn}"
+  name = "${local.api.name}-api"
+  identifier = "https://${local.api.fqdn}"
   signing_alg = "RS256"
 
   allow_offline_access = true
@@ -19,18 +57,35 @@ resource "auth0_resource_server" "api" {
   token_lifetime = 300
 }
 
-resource "auth0_client" "client" {
-  for_each = var.statics
+# resource auth0_resource_server_scopes scopes {
+#   for_each = { for name, api in var.apis: name => api.scopes }
+  
+#   resource_server_identifier = auth0_resource_server.api.identifier
 
-  name = "${each.key}-client"
+#   dynamic scopes {
+#     for_each = each.value
+
+#     content {
+#       description = scopes.value.description
+#       name = scopes.value.name
+#     }
+#   }
+# }
+
+resource "auth0_client" "client" {
+  //for_each = local.statics
+
+  name = "${local.static.name}-client"
   app_type = "regular_web"
   custom_login_page_on = false
   is_first_party = true
   
-  allowed_origins = [ var.fqdn ]
-  callbacks = [ var.fqdn ]
-  allowed_logout_urls = [ var.fqdn ]
-  web_origins = [ var.fqdn ]
+  allowed_origins = [ local.url ]
+  callbacks = [ "${local.url}callback" ]
+  allowed_logout_urls = [ local.url ]
+  web_origins = [ local.url ]
+
+  oidc_conformant = true
 
   grant_types = [ 
     "authorization_code",
@@ -50,8 +105,35 @@ resource "auth0_client" "client" {
   }
 }
 
+resource random_string client_secret {
+  length = 60
+  special = true
+  override_special = "_-+."
+}
+
+resource random_string secret {
+  length = 60
+  special = true
+  override_special = "_-+."
+}
+
+resource "auth0_client_credentials" "test" {
+  client_id = auth0_client.client.id
+
+  authentication_method = "client_secret_post"
+  client_secret = random_string.client_secret.result
+}
+
+resource auth0_client_grant client_grant {
+  client_id = auth0_client.client.client_id
+  audience = auth0_resource_server.api.identifier
+  scopes = []
+}
+
+// todo: this needs to come from config
 resource "auth0_connection" "auth0" {
-  name = "${var.name}-connection"
+
+  name = "app-api-connection"
   is_domain_connection = true
   strategy = "auth0"
 
@@ -76,59 +158,151 @@ resource "auth0_connection" "auth0" {
   }
 }
 
-resource "auth0_log_stream" "aws_eventbridge" {
-  name = "${var.name}-log-stream-aws-eventbridge"
-  type = "eventbridge"
-  status = "active"
-
-  sink {
-    aws_account_id = var.aws_eventbridge_account_id
-    aws_region = var.aws_eventbridge_region
-  }
+resource auth0_connection_clients connections {
+  connection_id = auth0_connection.auth0.id
+  enabled_clients = [ auth0_client.client.client_id ]
 }
 
-resource "auth0_role" "roles" {
-  for_each = var.roles
+# data aws_iam_policy_document secret_resource_policy {
+#   statement {
+#     effect = "Allow"
+#     principals {
+#       type = "AWS"
+#       identifiers = [ 
+#         local. 
+#       ]
+#     }
+#     actions = [ "secretsmanager:GetSecretValue" ]
+#     resources = [ aws_secretsmanager_secret.auth0_config.arn ]
+#   }
+# }
 
-  name = each.key
+resource random_string secret_name {
+  length = 8
+  special = false
+  numeric = false
+  upper = true
+  lower = true
 }
 
-resource "aws_verifiedpermissions_policy_store" "policy_store" {
-  validation_settings {
-    mode = "STRICT"
-  }
+locals {
+  auth0_config_secret_name = "${local.auth0_config_secret_name_prefix}-${random_string.secret_name.result}"
 }
 
-resource "aws_verifiedpermissions_schema" "schema" {
-  policy_store_id = aws_verifiedpermissions_policy_store.policy_store.policy_store_id
-
-  definition {
-    value = jsonencode({
-      "Namespace" : {
-        "entityTypes" : "???",
-        "actions" : local.actions
-      }
-    })
-  }
+resource aws_secretsmanager_secret auth0_config {
+  name = local.auth0_config_secret_name
 }
 
-resource "aws_verifiedpermissions_identity_source" "identity_source" {
-  policy_store_id = aws_verifiedpermissions_policy_store.policy_store.id
-  configuration {
-    open_id_connect_configuration {
-      issuer = local.issuer
-      token_selection {
-        access_token_only {
-          audiences          = local.audiences
-          principal_id_claim = "sub"
-        }
-      }
-      entity_id_prefix = "MyOIDCProvider"
-      group_configuration {
-        group_claim       = "groups"
-        group_entity_type = "MyCorp::UserGroup"
-      }
+resource aws_secretsmanager_secret_version auth0_config {
+  secret_id = aws_secretsmanager_secret.auth0_config.id
+  secret_string = jsonencode({
+    authRequired = true
+    auth0Logout = true
+    baseURL = "https://${local.static.fqdn}"
+    clientID = auth0_client.client.client_id
+    issuerBaseURL = "https://${data.auth0_tenant.tenant.domain}"
+    clientSecret = random_string.client_secret.result
+    secret = random_string.secret.result
+    authorizationParams = {
+      response_type = "code"
+      audience = "https://${local.api.fqdn}"
+      scope = "openid profile email"
     }
-  }
-  principal_entity_type = "MyCorp::User"
+  })
 }
+
+# resource aws_secretsmanager_secret_policy auth0_config {
+#   secret_arn = aws_secretsmanager_secret.auth0_config.arn
+#   policy = data.aws_iam_policy_document.secret_resource_policy.json
+# }
+
+# resource "auth0_log_stream" "aws_eventbridge" {
+#   // single log stream per tenant???
+
+#   name = "${var.name}-log-stream-aws-eventbridge"
+#   type = "eventbridge"
+#   status = "active"
+
+#   sink {
+#     aws_account_id = local.eventbridge_account
+#     aws_region = local.eventbridge_region 
+#   }
+# }
+
+# resource "auth0_role" "roles" {
+#   // 
+
+#   for_each = var.roles
+
+#   name = each.key
+# }
+
+# resource auth0_user god {
+#   // one user is created by default with full roles and perms
+
+#   email = 
+# }
+
+# resource auth0_custom_domain custom_domain {
+#   domain = "TODO"
+#   type = "auth0_managed_certs"
+# }
+
+# resource auth0_custom_domain_verification custom_domain {
+#   depends_on = [ aws_route53_record.auth_domain ]
+
+#   custom_domain_id = auth0_custom_domain.custom_domain.id
+
+#   timeouts {
+#     create = "10m"
+#   }
+# }
+
+# data aws_route53_zone root {
+#   name = var.fqdn
+# }
+
+# resource aws_route53_record auth_domain {
+#   hosted_zone = data.aws_route53_zone.root.id
+  
+# }
+
+# resource "aws_verifiedpermissions_policy_store" "policy_store" {
+#   validation_settings {
+#     mode = "STRICT"
+#   }
+# }
+
+# resource "aws_verifiedpermissions_schema" "schema" {
+#   policy_store_id = aws_verifiedpermissions_policy_store.policy_store.policy_store_id
+
+#   definition {
+#     value = jsonencode({
+#       "Namespace" : {
+#         "entityTypes" : "???",
+#         "actions" : local.actions
+#       }
+#     })
+#   }
+# }
+
+# resource "aws_verifiedpermissions_identity_source" "identity_source" {
+#   policy_store_id = aws_verifiedpermissions_policy_store.policy_store.id
+#   configuration {
+#     open_id_connect_configuration {
+#       issuer = local.issuer
+#       token_selection {
+#         access_token_only {
+#           audiences          = local.audiences
+#           principal_id_claim = "sub"
+#         }
+#       }
+#       entity_id_prefix = "MyOIDCProvider"
+#       group_configuration {
+#         group_claim       = "groups"
+#         group_entity_type = "MyCorp::UserGroup"
+#       }
+#     }
+#   }
+#   principal_entity_type = "MyCorp::User"
+# }

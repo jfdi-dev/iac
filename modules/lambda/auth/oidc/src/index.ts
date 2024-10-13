@@ -9,7 +9,10 @@ import {
 } from 'aws-lambda'
 
 import app from './middleware'
-import AuthConfigSecretId from './secret.json'
+
+import fs from 'node:fs'
+
+const AuthConfigSecretId = fs.readFileSync('./secret').toString('utf8')
 
 const secretsManager = new SecretsManager()
 

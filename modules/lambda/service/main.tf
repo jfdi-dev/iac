@@ -38,6 +38,7 @@ module "lambda_function" {
   name = "${var.name}-${each.key}"
   src = var.src
   handler = "handlers/${each.key}/index.handler"
+  apigw_lambda = true
 
   # settings = fileexists("${var.src}handlers/${each.key}/manifest.yml") ? yamldecode(file("${var.src}handlers/${each.key}/manifest.yml")) : {
   #   runtime = var.

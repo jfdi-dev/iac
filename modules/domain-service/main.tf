@@ -30,6 +30,24 @@ module "dr" {
 #   }  
 # }
 
+module auth {
+  count = var.protected ? 1 : 0
+  source = "../auth"
+
+  fqdn = var.fqdn
+}
+
+module "oidc_lambda" {
+  count = var.protected ? 1 : 0
+  source = "../lambda/auth/oidc"
+
+  providers = {
+    aws = aws.edge
+  }
+
+  secret = module.auth[0].secret_name
+}
+
 module "apis" {
   source = "../api/rest"
 
@@ -53,12 +71,11 @@ module "statics" {
 module "cdn" {
   providers = {
     aws.tls = aws.tls
-    aws.edge = aws.edge
   }
   source = "../cdn"
 
   fqdn = var.fqdn
-  protected = true
+  auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
 
   api = [ 
     for name, api in var.apis: 

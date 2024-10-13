@@ -47,6 +47,10 @@ module dr {
 
 # ^ Very boilerplate; Much wet
 
+# provider auth0 {
+
+# }
+
 module domain-service {
   source = "../../domain-service"
 

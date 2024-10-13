@@ -9,11 +9,11 @@ variable "fqdn" {
   }
 }
 
-variable "protected" {
-  type = bool
-  default = true
-  nullable = false
-}
+# variable "protected" {
+#   type = bool
+#   default = true
+#   nullable = false
+# }
 
 variable "static" {
   type = list(object({
@@ -56,3 +56,8 @@ variable "api" {
   }
 }
 
+# defo need a better way of doing this, 
+# but it will do for now...
+variable auth_lambda_arns {
+  type = set(string)
+}

@@ -9,6 +9,12 @@ variable "edge_lambda" {
   nullable = false
 }
 
+variable apigw_lambda {
+  type = bool
+  default = false
+  nullable = false
+}
+
 variable "src" {
   type = string
   default = "./src/"

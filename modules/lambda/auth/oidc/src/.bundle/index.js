@@ -21555,8 +21555,8 @@ var require_node = __commonJS({
           }
           break;
         case "FILE":
-          var fs = require("fs");
-          stream2 = new fs.SyncWriteStream(fd2, { autoClose: false });
+          var fs2 = require("fs");
+          stream2 = new fs2.SyncWriteStream(fd2, { autoClose: false });
           stream2._type = "fs";
           break;
         case "PIPE":
@@ -38216,7 +38216,7 @@ var require_view = __commonJS({
     "use strict";
     var debug = require_src2()("express:view");
     var path = require("path");
-    var fs = require("fs");
+    var fs2 = require("fs");
     var dirname = path.dirname;
     var basename = path.basename;
     var extname = path.extname;
@@ -38282,7 +38282,7 @@ var require_view = __commonJS({
     function tryStat(path2) {
       debug('stat "%s"', path2);
       try {
-        return fs.statSync(path2);
+        return fs2.statSync(path2);
       } catch (e) {
         return void 0;
       }
@@ -38637,7 +38637,7 @@ var require_types = __commonJS({
 var require_mime = __commonJS({
   "node_modules/mime/mime.js"(exports2, module2) {
     var path = require("path");
-    var fs = require("fs");
+    var fs2 = require("fs");
     function Mime() {
       this.types = /* @__PURE__ */ Object.create(null);
       this.extensions = /* @__PURE__ */ Object.create(null);
@@ -38658,7 +38658,7 @@ var require_mime = __commonJS({
     };
     Mime.prototype.load = function(file) {
       this._loading = file;
-      var map = {}, content = fs.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
+      var map = {}, content = fs2.readFileSync(file, "ascii"), lines = content.split(/[\r\n]+/);
       lines.forEach(function(line) {
         var fields = line.replace(/\s*#.*|^\s*|\s*$/g, "").split(/\s+/);
         map[fields.shift()] = fields;
@@ -38896,7 +38896,7 @@ var require_send = __commonJS({
     var escapeHtml = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
-    var fs = require("fs");
+    var fs2 = require("fs");
     var mime = require_mime();
     var ms = require_ms2();
     var onFinished = require_on_finished();
@@ -39229,7 +39229,7 @@ var require_send = __commonJS({
       var i = 0;
       var self = this;
       debug('stat "%s"', path2);
-      fs.stat(path2, function onstat(err, stat) {
+      fs2.stat(path2, function onstat(err, stat) {
         if (err && err.code === "ENOENT" && !extname(path2) && path2[path2.length - 1] !== sep) {
           return next(err);
         }
@@ -39244,7 +39244,7 @@ var require_send = __commonJS({
         }
         var p = path2 + "." + self._extensions[i++];
         debug('stat "%s"', p);
-        fs.stat(p, function(err2, stat) {
+        fs2.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self.emit("file", p, stat);
@@ -39262,7 +39262,7 @@ var require_send = __commonJS({
         }
         var p = join(path2, self._index[i]);
         debug('stat "%s"', p);
-        fs.stat(p, function(err2, stat) {
+        fs2.stat(p, function(err2, stat) {
           if (err2) return next(err2);
           if (stat.isDirectory()) return next();
           self.emit("file", p, stat);
@@ -39274,7 +39274,7 @@ var require_send = __commonJS({
     SendStream.prototype.stream = function stream(path2, options) {
       var self = this;
       var res = this.res;
-      var stream2 = fs.createReadStream(path2, options);
+      var stream2 = fs2.createReadStream(path2, options);
       this.emit("stream", stream2);
       stream2.pipe(res);
       function cleanup() {
@@ -64407,7 +64407,7 @@ var require_pump = __commonJS({
   "node_modules/pump/index.js"(exports2, module2) {
     var once = require_once();
     var eos = require_end_of_stream();
-    var fs = require("fs");
+    var fs2 = require("fs");
     var noop = function() {
     };
     var ancient = /^v?\.0/.test(process.version);
@@ -64416,8 +64416,8 @@ var require_pump = __commonJS({
     };
     var isFS = function(stream) {
       if (!ancient) return false;
-      if (!fs) return false;
-      return (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) && isFn(stream.close);
+      if (!fs2) return false;
+      return (stream instanceof (fs2.ReadStream || noop) || stream instanceof (fs2.WriteStream || noop)) && isFn(stream.close);
     };
     var isRequest = function(stream) {
       return stream.setHeader && isFn(stream.abort);
@@ -74275,13 +74275,12 @@ var middleware_default = (config) => {
   return app;
 };
 
-// secret.json
-var secret_default = "oidc-config";
-
 // index.ts
+var import_node_fs = __toESM(require("node:fs"));
+var AuthConfigSecretId = import_node_fs.default.readFileSync("./secret").toString("utf8");
 var secretsManager = new import_client_secrets_manager.SecretsManager();
 var configSecret = secretsManager.getSecretValue({
-  SecretId: secret_default
+  SecretId: AuthConfigSecretId
 });
 var handler = async (event, context, callback) => {
   const passThru = event?.Records?.[0]?.cf?.request;

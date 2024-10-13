@@ -6,3 +6,7 @@ output "function" {
 output "settings" {
   value = module.manifest.settings
 }
+
+output "role" {
+  value = aws_iam_role.lambda_role.arn
+}

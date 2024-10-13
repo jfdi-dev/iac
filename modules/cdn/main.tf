@@ -20,15 +20,6 @@ locals {
   zone_name = join(".", local.domain_without_subdomain)
 }
 
-module "oidc_lambda" {
-  count = var.protected ? 1 : 0
-  source = "../lambda/auth/oidc"
-
-  providers = { 
-    aws = aws.edge
-  }
-}
-
 resource "aws_cloudfront_origin_access_control" "static_oac" {
   for_each = { for idx, origin in local.statics: idx => origin }
 
@@ -135,14 +126,14 @@ resource "aws_cloudfront_distribution" "cdn" {
     target_origin_id = local.default_origin.fqdn
 
     viewer_protocol_policy = "redirect-to-https"
-
+    
     dynamic "lambda_function_association" {
-      for_each = module.oidc_lambda
+      for_each = var.auth_lambda_arns
       iterator = edge_function
 
       content {
         event_type = "viewer-request"
-        lambda_arn = edge_function.value.function.qualified_arn
+        lambda_arn = edge_function.value
         include_body = false
       }
     }
@@ -154,18 +145,34 @@ resource "aws_cloudfront_distribution" "cdn" {
     iterator = api
 
     content {
-      path_pattern = "/api/${api.value.path != null ? "${api.value.path}/" : ""}"
+      # APIs need cache disabled.
+      # This policy id needs looking up:
+      cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" #data.
+      # And this forwards all but host header to origin...
+      origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+      path_pattern = "/api/${api.value.path != null ? "${api.value.path}" : ""}"
       allowed_methods = [ "GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE", "POST" ]
       cached_methods = [ "GET", "HEAD" ]
       target_origin_id = api.value.fqdn
       viewer_protocol_policy = "https-only"
 
-      forwarded_values {
-        query_string = true
-        cookies {
-          forward = "all"
+      dynamic "lambda_function_association" {
+        for_each = var.auth_lambda_arns
+        iterator = edge_function
+
+        content {
+          event_type = "origin-request"
+          lambda_arn = edge_function.value
+          include_body = false
         }
       }
+
+      # forwarded_values {
+      #   query_string = true
+      #   cookies {
+      #     forward = "all"
+      #   }
+      # }
     }
   }
 
@@ -187,8 +194,8 @@ resource "aws_cloudfront_distribution" "cdn" {
 
 data aws_iam_policy_document bucket_policy {
   for_each = {
-    for idx, static in local.statics:
-    idx => static.bucket_name
+    for static in local.statics:
+    static.fqdn => static.bucket_name
   }
   statement {
     principals {
@@ -208,9 +215,9 @@ data aws_iam_policy_document bucket_policy {
 }
 
 resource aws_s3_bucket_policy content {
-  for_each = {
-    for idx, static in local.statics:
-    idx => static.bucket_name
+  for_each = {  
+    for static in local.statics:
+    static.fqdn => static.bucket_name
   }
   bucket = each.value
   policy = data.aws_iam_policy_document.bucket_policy[each.key].json

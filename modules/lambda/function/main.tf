@@ -9,7 +9,8 @@ locals {
   zip_path = "./.dist/${var.name}.zip"
   principal_identifiers = concat(
     ["lambda.amazonaws.com"], 
-    var.edge_lambda ? ["edgelambda.amazonaws.com"] : []
+    var.edge_lambda ? ["edgelambda.amazonaws.com"] : 
+    var.apigw_lambda ? ["apigateway.amazonaws.com"] : []
   )
 
   policies = {
@@ -18,9 +19,10 @@ locals {
     managed = coalesce(module.manifest.settings.policies.managed, [])
   }
 
+  managed_policies = !contains(local.policies.managed, "service-role/AWSLambdaBasicExecutionRole") ? concat(local.policies.managed, tolist([ "service-role/AWSLambdaBasicExecutionRole" ])) : local.policies.managed
 
   managed_policy_arns = tomap({
-    for managed_policy_name in local.policies.managed: 
+    for managed_policy_name in local.managed_policies: 
     managed_policy_name => "arn:aws:iam::aws:policy/${managed_policy_name}"
   })
 }
