@@ -1,3 +1,14 @@
+terraform {
+  backend s3 {
+  }
+}
+
+
+provider aws {
+  assume_role {
+    role_arn = var.role
+  }
+}
 
 module manifest {
   source = "../../artifact-manifest"
