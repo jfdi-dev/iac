@@ -18,6 +18,12 @@ module manifest {
   source = "../../artifact-manifest"
 }
 
+locals {
+  policies = merge(module.manifest.value.deployment.policies, {
+    named: "read-context-secret-${module.manifest.secrets}"
+  })
+}
+
 module deployer-role {
   source = "../../deployer-role"
 
@@ -25,5 +31,5 @@ module deployer-role {
   tooling_account = module.project-context.value.accounts.tooling
 
   artifact_name = module.manifest.value.artifact
-  policies = module.manifest.value.deployment.policies
+  policies = local.policies
 }
