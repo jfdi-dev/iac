@@ -9,3 +9,7 @@ variable subdomain {
   nullable = true
   default = null
 }
+
+variable context_secrets_file {
+  type = string
+}

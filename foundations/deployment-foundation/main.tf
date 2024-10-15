@@ -21,3 +21,9 @@ module dns-delegate {
   subdomain = "${var.subdomain}.${module.project-context.value.tldp1}"
   networking_account = module.project-context.value.accounts.networking
 }
+
+module context-secrets {
+  source = "../../modules/context-secrets/writer"
+
+  file = var.context_secrets_file
+}

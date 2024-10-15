@@ -11,6 +11,8 @@ deployment:
       - CloudFrontFullAccess
       # This is for Auth submodule:
       - SecretsManagerReadWrite
+secrets:
+  - auth0
 service:
   statics:
     ui: 
