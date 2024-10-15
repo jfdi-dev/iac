@@ -20,7 +20,7 @@ module manifest {
 
 locals {
   policies = merge(module.manifest.value.deployment.policies, {
-    named: "read-context-secret-${module.manifest.secrets}"
+    named: "read-context-secret-${module.manifest.value.secrets}"
   })
 }
 
