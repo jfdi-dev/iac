@@ -7,4 +7,4 @@ permissions:
 
 jobs:
   IAC-Build:
-    uses: jfdi-dev/pipelines/.github/workflows/pipelines/iac-build-pipeline.yml@main
+    uses: jfdi-dev/pipelines/.github/workflows/iac-build-pipeline.yml@main
