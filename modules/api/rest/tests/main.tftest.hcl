@@ -5,6 +5,7 @@ run "outputs-are-set" {
   variables {
     basepath = "./tests/fixtures/"
     name = "test"
+    env = "local"
     openapi_spec = "spec.yaml"
   }
 
@@ -32,11 +33,12 @@ run "outputs-are-set" {
 }
 
 run "outputs-actions" {
-  command = plan
+  command = apply
 
   variables {
     basepath = "./tests/fixtures/"
     name = "test"
+    env = "local"
     openapi_spec = "spec.yaml"
   }
 

@@ -11,6 +11,10 @@ paths:
     get:
       summary: List all pets
       operationId: listPets
+      security:
+        - LambdaAuthorizer:
+          - pets:read
+          - admin
       tags:
         - pets
       parameters:
@@ -107,3 +111,15 @@ components:
           format: int32
         message:
           type: string
+  securitySchemes:
+    LambdaAuthorizer: 
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authtype: custom
+      x-amazon-apigateway-authorizer:
+        type: REQUEST 
+        identitySource: method.request.header.Authorization
+        authorizerUri: ${authorizer_uri}
+        authorizerResultTtlInSeconds: 0
+      

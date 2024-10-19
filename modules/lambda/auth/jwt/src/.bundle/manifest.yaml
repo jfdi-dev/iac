@@ -1,0 +1,3 @@
+policies:
+  managed:
+    - service-role/AWSLambdaBasicExecutionRole

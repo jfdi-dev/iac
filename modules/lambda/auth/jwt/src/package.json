@@ -15,12 +15,16 @@
   "license": "MIT",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.143",
+    "@types/jsonwebtoken": "^9.0.7",
     "copy-files-from-to": "^3.11.0",
     "esbuild": "^0.23.1",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^3.1.0"
+  },
   "prettier": {
     "singleQuote": true,
     "semi": false
@@ -28,6 +32,10 @@
   "copyFiles": [
     {
       "from": "./**/manifest.yaml",
+      "to": "./.bundle/"
+    },
+    {
+      "from": "./scopes.json",
       "to": "./.bundle/"
     }
   ]

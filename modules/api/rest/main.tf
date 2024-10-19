@@ -1,10 +1,37 @@
 
 locals {
+  raw_spec = yamldecode(file("${var.basepath}${var.openapi_spec}"))
   openapi_spec = yamldecode(templatefile("${var.basepath}${var.openapi_spec}", {
     authorizer_uri = module.jwt-auth.function.invoke_arn
   }))
+  # Horrific. AWS moans if you set scopes on a non-cognito authorizer. Whole thing needs binning.
+  fixed_spec = merge(
+    local.openapi_spec,
+    {
+      paths = { 
+        for path, ops in local.openapi_spec.paths:
+        path => { 
+          for method, settings in ops:
+          method => merge({
+            for setting, values in settings:
+            setting => values
+            if setting != "security"
+          }, {
+            security = contains(keys(settings), "security") ? [
+              for schemes in settings["security"]:
+                {
+                  # Finally, we empty out the scopes. fml.
+                  for name, scopes in schemes:
+                  name => []
+                }
+            ]: []
+          })
+        }
+      }
+    }
+  )
   operations = flatten([
-    for path, methods in local.openapi_spec.paths: 
+    for path, methods in local.raw_spec.paths: 
     [
       for method, op in methods:
       {
@@ -19,15 +46,31 @@ locals {
 resource "aws_api_gateway_rest_api" "api" {
   name = var.name
 
-  body = jsonencode(local.openapi_spec)
+  body = jsonencode(local.fixed_spec)
 
   endpoint_configuration {
     types = [ "REGIONAL" ]
   }
 }
 
+locals {
+  scopes_map = {
+    for item in local.operations:
+    item.op.operationId => 
+      contains(keys(item.op), "security") ?
+        flatten([ 
+          for scheme in item.op.security:
+            [ for name, scopes in scheme: scopes ]
+          ]
+        )
+      : []
+  }
+}
+
 module jwt-auth {
   source = "../../lambda/auth/jwt"
+
+  scopes-map = local.scopes_map
 }
 
 # resource "aws_api_gateway_authorizer" "auth" {
