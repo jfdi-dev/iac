@@ -1,0 +1,10 @@
+name: JFDI IAC Build
+on: [push, workflow_dispatch]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  IAC-Build:
+    uses: jfdi-dev/pipelines/.github/workflows/pipelines/iac-build-pipeline.yml@main
