@@ -11,8 +11,10 @@ deployment:
       - CloudFrontFullAccess
       # This is for Auth submodule:
       - SecretsManagerReadWrite
+
 secrets:
   - auth0
+
 service:
   statics:
     ui: 
@@ -29,3 +31,22 @@ service:
       scopes:
         - read:pet
         - write:pet
+
+permissions:
+  verbs: read-write
+  nouns: aggregate-roots
+  roles:
+    _default:
+      - pet-reader
+
+    admin:
+      verbs: all
+      nouns: all
+
+    pet-admin:
+      verbs: read-write
+      nouns: pet
+
+    pet-reader:
+      verbs: read
+      nouns: pet

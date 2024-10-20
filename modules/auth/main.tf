@@ -158,6 +158,11 @@ resource aws_secretsmanager_secret auth0_config {
   name = local.auth0_config_secret_name
 }
 
+locals {
+  issuer_fqdn = var.dns.custom ? local.auth_fqdn : data.auth0_tenant.tenant.domain
+  issuer_base_url = "https://${local.issuer_fqdn}"
+}
+
 resource aws_secretsmanager_secret_version auth0_config {
   secret_id = aws_secretsmanager_secret.auth0_config.id
   secret_string = jsonencode({
@@ -165,7 +170,7 @@ resource aws_secretsmanager_secret_version auth0_config {
     auth0Logout = true
     baseURL = "https://${local.fqdn}"
     clientID = auth0_client.client.client_id
-    issuerBaseURL = "https://${data.auth0_tenant.tenant.domain}"
+    issuerBaseURL = local.issuer_base_url
     clientSecret = random_string.client_secret.result
     secret = random_string.secret.result
     authorizationParams = {
@@ -209,20 +214,44 @@ resource aws_secretsmanager_secret_version auth0_config {
 #   email = 
 # }
 
-# resource auth0_custom_domain custom_domain {
-#   domain = "TODO"
-#   type = "auth0_managed_certs"
-# }
+locals {
+  domain_parts = split(".", var.fqdn)
+  domain_without_subdomain = slice(local.domain_parts, 1, length(local.domain_parts))
+  zone_name = join(".", local.domain_without_subdomain)
+  auth_fqdn = "${var.dns.subdomain}.${local.zone_name}"
+}
 
-# resource auth0_custom_domain_verification custom_domain {
-#   depends_on = [ aws_route53_record.auth_domain ]
+data aws_route53_zone root_domain {
+  name = local.zone_name
+  private_zone = false
+}
 
-#   custom_domain_id = auth0_custom_domain.custom_domain.id
+resource auth0_custom_domain custom_domain {
+  count = var.dns.custom ? 1 : 0
+  domain = local.auth_fqdn
+  type = "auth0_managed_certs"
+}
 
-#   timeouts {
-#     create = "10m"
-#   }
-# }
+resource aws_route53_record auth_domain {
+  count = var.dns.custom ? 1 : 0
+  zone_id = data.aws_route53_zone.root_domain.zone_id
+  name = local.auth_fqdn
+  type = upper(auth0_custom_domain.custom_domain[0].verification[0].methods[0].name)
+  ttl = var.dns.ttl
+  records = auth0_custom_domain.custom_domain[0].verification[0].methods[0].record
+}
+
+resource auth0_custom_domain_verification custom_domain {
+  count = var.dns.custom ? 1 : 0
+
+  depends_on = [ aws_route53_record.auth_domain[0] ]
+
+  custom_domain_id = auth0_custom_domain.custom_domain.id
+
+  timeouts {
+    create = "10m"
+  }
+}
 
 # data aws_route53_zone root {
 #   name = var.fqdn

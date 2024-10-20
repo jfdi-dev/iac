@@ -20,6 +20,19 @@ variable client {
   })
 }
 
+variable dns {
+  type = object({
+    custom = bool
+    subdomain = string
+    ttl = number
+  })
+  default = {
+    custom = true
+    subdomain = "auth"
+    ttl = 300
+  }
+}
+
 # variable roles {
 
 # }
