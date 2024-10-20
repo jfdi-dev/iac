@@ -238,7 +238,7 @@ resource aws_route53_record auth_domain {
   name = local.auth_fqdn
   type = upper(auth0_custom_domain.custom_domain[0].verification[0].methods[0].name)
   ttl = var.dns.ttl
-  records = auth0_custom_domain.custom_domain[0].verification[0].methods[0].record
+  records = [auth0_custom_domain.custom_domain[0].verification[0].methods[0].record]
 }
 
 resource auth0_custom_domain_verification custom_domain {
