@@ -55,9 +55,7 @@ locals {
     for key, value in var.apis: 
     merge(
       value, 
-      {
-        fqdn = module.apis[key].fqdn
-      }, 
+      module.apis[key], 
       { name: key }
     )
   ]
@@ -65,10 +63,7 @@ locals {
     for key, value in var.statics:
     merge(
       value, 
-      {
-        fqdn = module.statics[key].fqdn,
-        bucket_name = module.statics[name].bucket_name
-      }, 
+      module.statics[key], 
       { name: key }
     )
   ]
