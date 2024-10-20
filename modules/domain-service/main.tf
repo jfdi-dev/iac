@@ -30,14 +30,47 @@ module "dr" {
 #   }  
 # }
 
+module "apis" {
+  source = "../api/rest"
+
+  for_each = var.apis
+
+  env = var.env
+  name = each.key
+  openapi_spec = each.value.spec
+  basepath = "${path.root}/${each.value.src}"
+}
+
+module "statics" {
+  source = "../static-content"
+
+  for_each = var.statics
+
+  name = each.key
+  dr = module.dr
+}
+
 locals {
   apis = [ 
     for key, value in var.apis: 
-    merge(value, { name: key })
+    merge(
+      value, 
+      {
+        fqdn = module.apis[key].fqdn
+      }, 
+      { name: key }
+    )
   ]
   statics = [
     for key, value in var.statics:
-    merge(value, { name: key })
+    merge(
+      value, 
+      {
+        fqdn = module.statics[key].fqdn,
+        bucket_name = module.statics[name].bucket_name
+      }, 
+      { name: key }
+    )
   ]
 }
 
@@ -63,25 +96,6 @@ module "oidc_lambda" {
   secret = module.auth[0].secret_name
 }
 
-module "apis" {
-  source = "../api/rest"
-
-  for_each = var.apis
-
-  env = var.env
-  name = each.key
-  openapi_spec = each.value.spec
-  basepath = "${path.root}/${each.value.src}"
-}
-
-module "statics" {
-  source = "../static-content"
-
-  for_each = var.statics
-
-  name = each.key
-  dr = module.dr
-}
 
 module "cdn" {
   providers = {
@@ -92,22 +106,24 @@ module "cdn" {
   fqdn = var.fqdn
   auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
 
-  api = [ 
-    for name, api in var.apis: 
-      {
-        fqdn = module.apis[name].fqdn
-        path = api.path
-      } 
-  ]
-  static = [ 
-    for name, static in var.statics: 
-      {
-        # just pass in the module???
-        fqdn = module.statics[name].fqdn
-        bucket_name = module.statics[name].bucket_name
-        path = static.path
-      }
-  ]
+  api = local.apis 
+  # [ 
+  #   for name, api in var.apis: 
+  #     {
+  #       fqdn = module.apis[name].fqdn
+  #       path = api.path
+  #     } 
+  # ]
+  static = local.statics
+  # [ 
+  #   for name, static in var.statics: 
+  #     {
+  #       # just pass in the module???
+  #       fqdn = module.statics[name].fqdn
+  #       bucket_name = module.statics[name].bucket_name
+  #       path = static.path
+  #     }
+  # ]
 }
 
 module "dns" {
