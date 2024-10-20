@@ -31,8 +31,8 @@ resource auth0_resource_server_scopes scopes {
 
     content {
       # Todo: description in manifest
-      description = scopes.value.name
-      name = scopes.value.name
+      description = scopes.value
+      name = scopes.value
     }
   }
 }
