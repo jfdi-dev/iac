@@ -30,6 +30,17 @@ module "dr" {
 #   }  
 # }
 
+locals {
+  apis = [ 
+    for key, value in var.apis: 
+    merge(value, { name: key })
+  ]
+  statics = [
+    for key, value in var.statics:
+    merge(value, { name: key })
+  ]
+}
+
 module auth {
   count = var.protected ? 1 : 0
   source = "../auth"
@@ -37,8 +48,8 @@ module auth {
   fqdn = var.fqdn
   
   # Limited to first api + first static, for now
-  api = var.apis[0]
-  client = var.statics[0]
+  api = local.apis[0]
+  client = local.statics[0]
 }
 
 module "oidc_lambda" {
