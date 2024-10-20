@@ -162,14 +162,15 @@ resource aws_secretsmanager_secret_version auth0_config {
   secret_string = jsonencode({
     authRequired = true
     auth0Logout = true
-    baseURL = "https://${var.client.fqdn}"
+    baseURL = "https://${local.fqdn}"
     clientID = auth0_client.client.client_id
     issuerBaseURL = "https://${data.auth0_tenant.tenant.domain}"
     clientSecret = random_string.client_secret.result
     secret = random_string.secret.result
     authorizationParams = {
       response_type = "code"
-      audience = "https://${var.api.fqdn}"
+      # This is probably wrong: will be API GW fqdn, not public URL of API under CloudFront...
+      audience = "https://${var.api.fqdn}" 
       scope = "openid profile email ${join(" ", var.api.scopes)}"
     }
   })
