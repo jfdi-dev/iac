@@ -246,7 +246,7 @@ resource auth0_custom_domain_verification custom_domain {
 
   depends_on = [ aws_route53_record.auth_domain[0] ]
 
-  custom_domain_id = auth0_custom_domain.custom_domain.id
+  custom_domain_id = auth0_custom_domain.custom_domain[0].id
 
   timeouts {
     create = "10m"
