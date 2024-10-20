@@ -1,26 +1,23 @@
-# variable role {
-#   type = string
-# }
-
-# variable auth0_token {
-
-# }
 
 variable fqdn {
   type = string
 }
 
-# variable apis {
-#   type = map(object({
-#     fqdn = string
-#   }))
-# }
+variable api {
+  type = object({
+    name = string
+    fqdn = string
+    scopes = set(string)
+  })
+}
 
-# variable statics {
-#   type = map(object({
-    
-#   }))
-# }
+variable client {
+  type = object({
+    name = string
+    fqdn = string
+    scopes = set(string)
+  })
+}
 
 # variable roles {
 

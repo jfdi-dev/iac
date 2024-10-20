@@ -18,8 +18,14 @@ service:
     ui: 
       path: '*'
       src: ui/
+      scopes:
+        - read:pet
+        - write:pet
   apis:
     api: 
       path: '*'
       src: api/
       spec: spec.yml
+      scopes:
+        - read:pet
+        - write:pet

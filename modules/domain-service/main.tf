@@ -35,6 +35,10 @@ module auth {
   source = "../auth"
 
   fqdn = var.fqdn
+  
+  # Limited to first api + first static, for now
+  api = var.apis[0]
+  client = var.statics[0]
 }
 
 module "oidc_lambda" {

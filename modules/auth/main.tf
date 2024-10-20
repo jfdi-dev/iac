@@ -1,51 +1,17 @@
-# provider aws {
-#   assume_role {
-#     role_arn = var.role
-#   }
-# }
-
-# provider auth0 {
-
-# }
 
 locals {
   fqdn = var.fqdn
   url = "https://${local.fqdn}/"
   auth0_config_secret_name_prefix = "oidc-config"
-  #apis = var.apis
-  # apis = {
-  #   app = {
-  #     fqdn = "app.dev.bonemilllane.com/api"
-  #   }
-  # }
-  api = {
-    name = "app"
-    fqdn = "${local.fqdn}/api"
-  }
-  # statics = {
-  #   app = {
-  #     fqdn = "app.dev.bonemilllane.com"
-  #   }
-  # }
-  static = {
-    name = "app"
-    fqdn = local.fqdn
-  }
 }
-
-# resource auth0_tenant env_tenant {
-
-# }
 
 data auth0_tenant tenant {
 
 }
 
 resource "auth0_resource_server" "api" {
-  #for_each = local.apis
-
-  name = "${local.api.name}-api"
-  identifier = "https://${local.api.fqdn}"
+  name = "${var.api.name}-api"
+  identifier = "https://${var.api.fqdn}"
   signing_alg = "RS256"
 
   allow_offline_access = true
@@ -57,29 +23,27 @@ resource "auth0_resource_server" "api" {
   token_lifetime = 300
 }
 
-# resource auth0_resource_server_scopes scopes {
-#   for_each = { for name, api in var.apis: name => api.scopes }
-  
-#   resource_server_identifier = auth0_resource_server.api.identifier
+resource auth0_resource_server_scopes scopes {
+  resource_server_identifier = auth0_resource_server.api.identifier
 
-#   dynamic scopes {
-#     for_each = each.value
+  dynamic scopes {
+    for_each = var.api.scopes
 
-#     content {
-#       description = scopes.value.description
-#       name = scopes.value.name
-#     }
-#   }
-# }
+    content {
+      # Todo: description in manifest
+      description = scopes.value.name
+      name = scopes.value.name
+    }
+  }
+}
 
 resource "auth0_client" "client" {
-  //for_each = local.statics
-
-  name = "${local.static.name}-client"
+  name = "${var.client.name}-client"
   app_type = "regular_web"
   custom_login_page_on = false
   is_first_party = true
   
+  # URL from CDN FQDN, or from client FQDN?
   allowed_origins = [ local.url ]
   callbacks = [ "${local.url}callback" ]
   allowed_logout_urls = [ local.url ]
@@ -117,7 +81,7 @@ resource random_string secret {
   override_special = "_-+."
 }
 
-resource "auth0_client_credentials" "test" {
+resource "auth0_client_credentials" "credentials" {
   client_id = auth0_client.client.id
 
   authentication_method = "client_secret_post"
@@ -127,7 +91,7 @@ resource "auth0_client_credentials" "test" {
 resource auth0_client_grant client_grant {
   client_id = auth0_client.client.client_id
   audience = auth0_resource_server.api.identifier
-  scopes = []
+  scopes = var.client.scopes
 }
 
 // todo: this needs to come from config
@@ -198,15 +162,15 @@ resource aws_secretsmanager_secret_version auth0_config {
   secret_string = jsonencode({
     authRequired = true
     auth0Logout = true
-    baseURL = "https://${local.static.fqdn}"
+    baseURL = "https://${var.client.fqdn}"
     clientID = auth0_client.client.client_id
     issuerBaseURL = "https://${data.auth0_tenant.tenant.domain}"
     clientSecret = random_string.client_secret.result
     secret = random_string.secret.result
     authorizationParams = {
       response_type = "code"
-      audience = "https://${local.api.fqdn}"
-      scope = "openid profile email"
+      audience = "https://${var.api.fqdn}"
+      scope = "openid profile email ${join(" ", var.api.scopes)}"
     }
   })
 }

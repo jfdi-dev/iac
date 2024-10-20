@@ -22,6 +22,7 @@ variable "statics" {
   type = map(object({
     path = string
     src = string
+    scopes = set(string)
   }))
   nullable = true
   default = {}
@@ -32,6 +33,7 @@ variable "apis" {
     path = string
     src = string
     spec = string
+    scopes = set(string)
   }))
   nullable = true
   default = {}  
