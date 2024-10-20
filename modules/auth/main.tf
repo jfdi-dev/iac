@@ -11,7 +11,8 @@ data auth0_tenant tenant {
 
 resource "auth0_resource_server" "api" {
   name = "${var.api.name}-api"
-  identifier = "https://${var.api.fqdn}"
+  # again, this needs to come from CDN module or something...
+  identifier = "https://${local.fqdn}/api"
   signing_alg = "RS256"
 
   allow_offline_access = true
@@ -169,8 +170,8 @@ resource aws_secretsmanager_secret_version auth0_config {
     secret = random_string.secret.result
     authorizationParams = {
       response_type = "code"
-      # This is probably wrong: will be API GW fqdn, not public URL of API under CloudFront...
-      audience = "https://${var.api.fqdn}" 
+      # This should be the public URL of the API...
+      audience = "https://${local.fqdn}/api" 
       scope = "openid profile email ${join(" ", var.api.scopes)}"
     }
   })

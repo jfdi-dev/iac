@@ -7,6 +7,7 @@ variable api {
   type = object({
     name = string
     fqdn = string
+    path = string
     scopes = set(string)
   })
 }
