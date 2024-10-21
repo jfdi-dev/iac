@@ -17,6 +17,7 @@ variable client {
     name = string
     fqdn = string
     scopes = set(string)
+    short_name = string
   })
 }
 
