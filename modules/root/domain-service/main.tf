@@ -70,7 +70,7 @@ module domain-service {
 
   statics = {
     for key, value in local.config.service.statics:
-    "${key}.${local.fqdn}" => value
+    "${key}.${local.fqdn}" => merge(value, { short_name: key })
   }
   apis = local.config.service.apis
   #datastores = local.config.service.datastores
