@@ -216,7 +216,7 @@ resource auth0_connection_clients facebook {
   enabled_clients = [ auth0_client.client.client_id ]
 }
 
-resource atuh0_connection_clients linkedin {
+resource auth0_connection_clients linkedin {
   count = local.connections.linkedin ? 1 : 0
 
   connection_id = auth0_connection.linkedin[0].id
