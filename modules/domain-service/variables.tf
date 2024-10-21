@@ -23,6 +23,7 @@ variable "statics" {
     path = string
     src = string
     scopes = set(string)
+    short_name = string
   }))
   nullable = true
   default = {}
