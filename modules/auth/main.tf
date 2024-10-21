@@ -3,6 +3,13 @@ locals {
   fqdn = var.fqdn
   url = "https://${local.fqdn}/"
   auth0_config_secret_name_prefix = "oidc-config"
+
+  minutes = 60
+  hours = 60 * local.minutes
+
+  access_token_lifetime = 5 * local.minutes
+  refresh_token_idle_lifetime = 8 * local.hours
+  refresh_token_absolute_lifetime = 24 * local.hours
 }
 
 data auth0_tenant tenant {
@@ -21,7 +28,7 @@ resource "auth0_resource_server" "api" {
   skip_consent_for_verifiable_first_party_clients = true
 
   token_dialect = "rfc9068_profile_authz"
-  token_lifetime = 300
+  token_lifetime = local.access_token_lifetime
 }
 
 resource auth0_resource_server_scopes scopes {
@@ -59,14 +66,14 @@ resource "auth0_client" "client" {
 
   jwt_configuration {
     alg = "RS256"
-    lifetime_in_seconds = 300
+    lifetime_in_seconds = local.access_token_lifetime
   }
 
   refresh_token {
     expiration_type = "expiring"
     rotation_type = "rotating"
-    idle_token_lifetime = 60*60*8
-    token_lifetime = 60*60*24
+    idle_token_lifetime = local.refresh_token_idle_lifetime
+    token_lifetime = local.refresh_token_absolute_lifetime
   }
 }
 
@@ -173,6 +180,9 @@ resource aws_secretsmanager_secret_version auth0_config {
     issuerBaseURL = local.issuer_base_url
     clientSecret = random_string.client_secret.result
     secret = random_string.secret.result
+    session = {
+      rollingDuration = local.access_token_lifetime
+    }
     authorizationParams = {
       response_type = "code"
       # This should be the public URL of the API...
@@ -253,14 +263,7 @@ resource auth0_custom_domain_verification custom_domain {
   }
 }
 
-# data aws_route53_zone root {
-#   name = var.fqdn
-# }
-
-# resource aws_route53_record auth_domain {
-#   hosted_zone = data.aws_route53_zone.root.id
-  
-# }
+# This can either get deleted or moved to an `avp/` dir?
 
 # resource "aws_verifiedpermissions_policy_store" "policy_store" {
 #   validation_settings {
