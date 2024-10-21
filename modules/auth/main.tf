@@ -144,7 +144,7 @@ resource "auth0_connection" "database" {
 resource "auth0_connection" "google" {
   count = local.connections.google ? 1 : 0
 
-  name = "${var.api.name}-google-connection"
+  name = "${var.client.name}-google-connection"
   strategy = "google-oauth2"
 
   options {
@@ -162,7 +162,7 @@ resource "auth0_connection" "google" {
 resource "auth0_connection" "facebook" {
   count = local.connections.facebook ? 1 : 0
 
-  name     = "${var.app.name}-facebook-connection"
+  name     = "${var.client.name}-facebook-connection"
   strategy = "facebook"
 
   options {
@@ -182,7 +182,7 @@ resource "auth0_connection" "facebook" {
 resource "auth0_connection" "linkedin" {
   count = local.connections.linkedin ? 1 : 0
 
-  name     = "${var.app.name}-linkedin-connection"
+  name     = "${var.client.name}-linkedin-connection"
   strategy = "linkedin"
 
   options {
