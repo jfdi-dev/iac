@@ -1,4 +1,5 @@
 artifact: app
+
 deployment:
   policies:
     managed:
@@ -14,50 +15,3 @@ deployment:
 
 secrets:
   - auth0
-
-service:
-  statics:
-    ui: 
-      path: '*'
-      src: ui/
-      scopes:
-        - read:pet
-        - write:pet
-  apis:
-    api: 
-      path: '*'
-      src: api/
-      spec: spec.yml
-      scopes:
-        - read:pet
-        - write:pet
-
-auth:
-
-  connections:
-    - database
-    - google
-    - facebook
-    #- apple
-    #- microsoft
-    #- linkedin
-    #- twitter
-
-  permissions:
-    verbs: read-write
-    nouns: aggregate-roots
-    roles:
-      _default:
-        - pet-reader
-
-      admin:
-        verbs: all
-        nouns: all
-
-      pet-admin:
-        verbs: read-write
-        nouns: pet
-
-      pet-reader:
-        verbs: read
-        nouns: pet
