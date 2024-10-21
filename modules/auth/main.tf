@@ -10,6 +10,14 @@ locals {
   access_token_lifetime = 5 * local.minutes
   refresh_token_idle_lifetime = 8 * local.hours
   refresh_token_absolute_lifetime = 24 * local.hours
+
+  connections = {
+    database: contains(var.connections, "database")
+    google: contains(var.connections, "google")
+    facebook: contains(var.connections, "facebook")
+    apple: contains(var.connections, "apple")
+    linkedin: contains(var.connections, "linkedin")
+  }
 }
 
 data auth0_tenant tenant {
@@ -103,9 +111,10 @@ resource auth0_client_grant client_grant {
 }
 
 // todo: this needs to come from config
-resource "auth0_connection" "auth0" {
+resource "auth0_connection" "database" {
+  count = local.connections.database ? 1 : 0
 
-  name = "app-api-connection"
+  name = "${var.api.name}-database-connection"
   is_domain_connection = true
   strategy = "auth0"
 
@@ -130,8 +139,87 @@ resource "auth0_connection" "auth0" {
   }
 }
 
-resource auth0_connection_clients connections {
-  connection_id = auth0_connection.auth0.id
+# This is an example of a Google OAuth2 connection.
+
+resource "auth0_connection" "google" {
+  count = local.connections.google ? 1 : 0
+
+  name = "${var.api.name}-google-connection"
+  strategy = "google-oauth2"
+
+  options {
+    client_id                = auth0_client.client.client_id
+    client_secret            = random_string.client_secret.result
+    allowed_audiences        = ["https://${local.fqdn}/api" ]
+    scopes                   = ["email", "profile"]
+    set_user_root_attributes = "on_each_login"
+    non_persistent_attrs     = ["ethnicity", "gender"]
+  }
+}
+
+# This is an example of a Facebook connection.
+
+resource "auth0_connection" "facebook" {
+  count = local.connections.facebook ? 1 : 0
+
+  name     = "${var.app.name}-facebook-connection"
+  strategy = "facebook"
+
+  options {
+    client_id     = auth0_client.client.client_id
+    client_secret = random_string.client_secret.result
+    scopes = [
+      "public_profile",
+      "email",
+    ]
+    set_user_root_attributes = "on_each_login"
+    non_persistent_attrs     = ["ethnicity", "gender"]
+  }
+}
+
+# This is an example of an LinkedIn connection.
+
+resource "auth0_connection" "linkedin" {
+  count = local.connections.linkedin ? 1 : 0
+
+  name     = "${var.app.name}-linkedin-connection"
+  strategy = "linkedin"
+
+  options {
+    client_id                = auth0_client.client.client_id
+    client_secret            = random_string.client_secret.result
+    strategy_version         = 2
+    scopes                   = ["basic_profile", "profile", "email"]
+    set_user_root_attributes = "on_each_login"
+    non_persistent_attrs     = ["ethnicity", "gender"]
+  }
+}
+
+resource auth0_connection_clients database {
+  count = local.connections.database ? 1 : 0 
+
+  connection_id = auth0_connection.database[0].id
+  enabled_clients = [ auth0_client.client.client_id ]
+}
+
+resource auth0_connection_clients google {
+  count = local.connections.google ? 1 : 0
+
+  connection_id = auth0_connection.google[0].id
+  enabled_clients = [ auth0_client.client.client_id ]
+}
+
+resource auth0_connection_clients facebook {
+  count = local.connections.facebook ? 1 : 0
+
+  connection_id = auth0_connection.facebook[0].id
+  enabled_clients = [ auth0_client.client.client_id ]
+}
+
+resource atuh0_connection_clients linkedin {
+  count = local.connections.linkedin ? 1 : 0
+
+  connection_id = auth0_connection.linkedin[0].id
   enabled_clients = [ auth0_client.client.client_id ]
 }
 
@@ -185,7 +273,7 @@ resource aws_secretsmanager_secret_version auth0_config {
     }
     authorizationParams = {
       response_type = "code"
-      # This should be the public URL of the API...
+      # This needs to be the public URL of the API...
       audience = "https://${local.fqdn}/api" 
       scope = "openid profile email ${join(" ", var.api.scopes)}"
     }

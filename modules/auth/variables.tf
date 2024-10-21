@@ -33,6 +33,11 @@ variable dns {
   }
 }
 
+variable connections {
+  type = set(string)
+  default = ["database"]
+}
+
 # variable roles {
 
 # }

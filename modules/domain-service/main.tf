@@ -74,6 +74,9 @@ module auth {
   source = "../auth"
 
   fqdn = var.fqdn
+
+  # should have a policy of not reach >1 level into the manifest (ie: pass in auth here, not connections)
+  connections = var.manifest.auth.connections
   
   # Limited to first api + first static, for now
   api = local.apis[0]

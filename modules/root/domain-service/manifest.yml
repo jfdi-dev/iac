@@ -32,21 +32,32 @@ service:
         - read:pet
         - write:pet
 
-permissions:
-  verbs: read-write
-  nouns: aggregate-roots
-  roles:
-    _default:
-      - pet-reader
+auth:
 
-    admin:
-      verbs: all
-      nouns: all
+  connections:
+    - database
+    - google
+    - facebook
+    #- apple
+    #- microsoft
+    #- linkedin
+    #- twitter
 
-    pet-admin:
-      verbs: read-write
-      nouns: pet
+  permissions:
+    verbs: read-write
+    nouns: aggregate-roots
+    roles:
+      _default:
+        - pet-reader
 
-    pet-reader:
-      verbs: read
-      nouns: pet
+      admin:
+        verbs: all
+        nouns: all
+
+      pet-admin:
+        verbs: read-write
+        nouns: pet
+
+      pet-reader:
+        verbs: read
+        nouns: pet

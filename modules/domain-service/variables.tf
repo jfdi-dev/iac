@@ -47,3 +47,8 @@ variable "datastores" {
   nullable = true
   default = {}
 }
+
+variable "manifest" {
+  # This will do for now
+  type = any
+}

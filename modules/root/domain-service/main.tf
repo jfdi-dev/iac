@@ -66,6 +66,8 @@ module domain-service {
 
   disaster_recovery_level = module.dr.level
 
+  manifest = module.manifest
+
   statics = {
     for key, value in local.config.service.statics:
     "${key}.${local.fqdn}" => value
