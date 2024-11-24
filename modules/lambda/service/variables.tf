@@ -11,12 +11,6 @@ variable "functions" {
   description = "The list of functions that the service must provide."
 }
 
-variable "basePath" {
-  type = string
-  default = ".build/"
-  description = "The base-path that all functions live under."
-}
-
 variable "src" {
   type = string
   nullable = false
