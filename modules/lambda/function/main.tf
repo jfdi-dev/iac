@@ -22,7 +22,7 @@ locals {
 }
 
 module identity_policies {
-  source = "../identity-policies"
+  source = "../../identity-policies"
 
   identity = aws_iam_role.lambda_role.name
 
