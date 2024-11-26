@@ -5,6 +5,7 @@ variable "path" {
 
 variable "defaults" {
   type = object({
+    environment = map(string)
     runtime = object({
       name = string
       timeout = number
@@ -14,13 +15,26 @@ variable "defaults" {
       reserved = number
       provisioned = number
     })
-    iam_role_statements = list(object({
-      effect = string
-      actions = list(string)
-      resources = list(string)
-    }))
+    policies = object({
+       custom = optional(
+        map(
+          list(
+            object({
+              effect = string
+              actions = set(string)
+              resources = set(string)
+            })
+          )
+        )
+      )
+      named = optional(set(string))
+      managed = optional(set(string))
+      service = optional(set(string))
+    })
   })
   default = {
+    environment = {
+    }
     runtime = {
       name = "nodejs20.x"
       timeout = 5
@@ -30,6 +44,11 @@ variable "defaults" {
       provisioned = 0
       reserved = -1
     }
-    iam_role_statements = [ ]
+    policies = {
+      custom = {}
+      named = []
+      managed = []
+      service = []
+    }
   }
 }

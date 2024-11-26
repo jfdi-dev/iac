@@ -5,7 +5,3 @@ runtime:
 concurrency:
   reserved: 250
   provisioned: 20
-iam_role_statements:
-  - effect: allow
-    actions: ["s3:ListBuckets"]
-    resources: ["www.mybucket.com"]

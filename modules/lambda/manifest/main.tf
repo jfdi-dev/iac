@@ -36,10 +36,6 @@ locals {
     for manifest in local.p5: manifest.concurrency
     if contains(keys(manifest), "concurrency")
   ]...)
-  permissions = concat([], [
-    for manifest in local.p5: manifest.iam_role_statements
-    if contains(keys(manifest), "iam_role_statements")
-  ]...)
   policies = merge({
     managed: []
     named: []
@@ -52,7 +48,6 @@ locals {
   manifest = {
     runtime = local.runtime
     concurrency = local.concurrency
-    iam_role_statements = local.permissions 
     policies = local.policies
   }
 }

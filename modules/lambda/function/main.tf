@@ -17,15 +17,21 @@ locals {
     custom = coalesce(module.manifest.settings.policies.custom, {})
     named = coalesce(module.manifest.settings.policies.named, [])
     managed = coalesce(module.manifest.settings.policies.managed, [])
+    service = coalesce(module.manifest.settings.policies.service, [])
   }
+}
 
-  managed_policies = !contains(local.policies.managed, "service-role/AWSLambdaBasicExecutionRole") ? concat(local.policies.managed, tolist([ "service-role/AWSLambdaBasicExecutionRole" ])) : local.policies.managed
+module identity_policies {
+  source = "../identity-policies"
 
-  managed_policy_arns = tomap({
-    for managed_policy_name in local.managed_policies: 
-    managed_policy_name => "arn:aws:iam::aws:policy/${managed_policy_name}"
+  identity = aws_iam_role.lambda_role.name
+
+  policies = merge(local.policies,
+  {
+    service = ["AWSLambdaBasicExecutionRole"]
   })
 }
+
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
@@ -40,43 +46,9 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-data "aws_iam_policy_document" "lambda_policies" {
-  for_each = var.permissions
-
-  dynamic "statement" {
-    for_each = each.value
-    content {
-      effect = statement.value["effect"]
-      actions = statement.value["actions"]
-      resources = statement.value["resources"]
-    }
-  }
-}
-
-
-resource aws_iam_role_policy_attachment managed_policies {
-  for_each = local.managed_policy_arns
-
-  role = aws_iam_role.lambda_role.name
-  policy_arn = each.value
-}
-
-resource "aws_iam_policy" "policies" {
-  for_each = { for name, policy in data.aws_iam_policy_document.lambda_policies: name => policy }
-  name = "${each.key}-policy"
-  policy = each.value.json
-}
-
 resource "aws_iam_role" "lambda_role" {
   name = "${var.name}-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_role" {
-  for_each = aws_iam_policy.policies
-
-  role = aws_iam_role.lambda_role.name
-  policy_arn = each.value.arn
 }
 
 data "archive_file" "lambda" {
@@ -107,6 +79,10 @@ resource "aws_lambda_function" "lambda" {
   filename = local.zip_path
   handler = var.handler
   publish = true
+
+  # environment {
+  #   variables = module.manifest.settings.environment
+  # }
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 

@@ -42,7 +42,7 @@ run "manifest_construction_process" {
   }
 
   assert {
-    condition = local.p4 == [
+    condition = jsonencode(local.p4) == jsonencode([
       null,
       null,
       null,
@@ -56,18 +56,11 @@ run "manifest_construction_process" {
           reserved = 250
           provisioned = 20
         }
-        iam_role_statements = [
-          {
-            effect = "allow"
-            actions = ["s3:ListBuckets"]
-            resources = ["www.mybucket.com"]
-          }
-        ]
       },
       null,
       null
-    ]
-    error_message = "p4 error"
+    ])
+    error_message = "p4 error: ${jsonencode(local.p4)}"
   }
 
   # # What's up with this guy?
@@ -108,7 +101,7 @@ run "manifest_construction_process" {
   # }
 
   assert {
-    condition = output.settings == {
+    condition = jsonencode(output.settings) == jsonencode({
       runtime = {
         name = "nodejs20.x"
         timeout = 35
@@ -118,15 +111,14 @@ run "manifest_construction_process" {
         reserved = 250
         provisioned = 20
       }
-      iam_role_statements = [
-        {
-          effect = "allow"
-          actions = ["s3:ListBuckets"]
-          resources = ["www.mybucket.com"]
-        }
-      ]
-    }
-    error_message = "Calculated manifest does not match expectations."
+      policies = {
+        custom = {}
+        managed = []
+        named = []
+        service = []
+      }
+    })
+    error_message = "Calculated manifest does not match expectations: ${jsonencode(output.settings)}"
   }
 }
 
@@ -138,7 +130,7 @@ run "manifest_merging" {
   } 
 
   assert {
-    condition = output.settings == {
+    condition = jsonencode(output.settings) == jsonencode({
       runtime = {
         name = "nodejs18.x"
         memory_size = 1024
@@ -148,15 +140,14 @@ run "manifest_merging" {
         reserved = 250
         provisioned = 25
       }
-      iam_role_statements = [
-        {
-          effect = "allow"
-          actions = ["s3:ListBuckets"]
-          resources = ["www.mybucket.com"]
-        }
-      ]
-    }
-    error_message = "Merged manifest does not match expectations."
+      policies = {
+        custom = {}
+        managed = []
+        named = []
+        service = []
+      }
+    })
+    error_message = "Merged manifest does not match expectations: ${jsonencode(output.settings)}"
   }
 }
 
@@ -168,7 +159,7 @@ run "manifest_permissions_merging" {
   } 
 
   assert {
-    condition = output.settings == {
+    condition = jsonencode(output.settings) == jsonencode({
       runtime = {
         name = "nodejs20.x"
         timeout = 35
@@ -178,20 +169,14 @@ run "manifest_permissions_merging" {
         reserved = 250
         provisioned = 20
       }
-      iam_role_statements = [
-        {
-          effect = "allow"
-          actions = ["s3:ListBuckets"]
-          resources = ["www.mybucket.com"]
-        },
-        {
-          effect = "allow"
-          actions = ["s3:CreateBucket"]
-          resources = ["docs.mybucket.com"]
-        }
-      ]
-    }
-    error_message = "Merged manifest does not match expectations."
+      policies = {
+        custom = {}
+        managed = ["ManagedPolicy"]
+        named = ["NamedPolicy"]
+        service = []
+      }
+    })
+    error_message = "Merged manifest does not match expectations: ${jsonencode(output.settings)}"
   }
 }
 
@@ -204,29 +189,23 @@ run "manifest_can_be_json" {
   } 
 
   assert {
-    condition = output.settings == {
+    condition = jsonencode(output.settings) == jsonencode({
+      concurrency = {
+        reserved = 300
+        provisioned = 20
+      }
+      policies = {
+        custom = {}
+        managed = []
+        named = []
+        service = []
+      }
       runtime = {
         name = "python2.1"
         timeout = 111
         memory_size = 512
       }
-      concurrency = {
-        reserved = 300
-        provisioned = 20
-      }
-      iam_role_statements = [
-        {
-          effect = "allow"
-          actions = ["s3:ListBuckets"]
-          resources = ["www.mybucket.com"]
-        },
-        {
-          effect = "allow"
-          actions = ["iam:CreateRole"]
-          resources = ["*"]
-        }
-      ]
-    }
-    error_message = "Merged manifest does not match expectations."
+    })
+    error_message = "Merged manifest does not match expectations: ${jsonencode(output.settings)}"
   }
 }

@@ -5,12 +5,5 @@
   },
   "concurrency": {
     "reserved": 300
-  },
-  "iam_role_statements": [
-    {
-      "effect": "allow",
-      "actions": ["iam:CreateRole"],
-      "resources": ["*"]
-    }
-  ]
+  }
 }

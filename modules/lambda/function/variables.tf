@@ -62,17 +62,6 @@ variable policies {
   }
 }
 
-
-variable "permissions" {
-  type = map(list(object({ 
-    effect = optional(string)
-    actions = optional(set(string))
-    resources = optional(set(string))
-  })))
-  nullable = false
-  default = {}
-}
-
 variable "settings" {
   type = object({
     runtime = object({
