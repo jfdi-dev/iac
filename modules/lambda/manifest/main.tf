@@ -1,5 +1,6 @@
 
 locals {
+  yml_manifest_file = "manifest.yml"
   yaml_manifest_file = "manifest.yaml"
   json_manifest_file = "manifest.json"
   # Take directory path from handler
@@ -12,11 +13,13 @@ locals {
   # Load all manifests in the directory hierarchy, whether yaml or json
   p4 = [ 
     for path in local.p3: 
-      fileexists("${path}${local.yaml_manifest_file}") ? 
-        yamldecode(file("${path}${local.yaml_manifest_file}")) :
-        fileexists("${path}${local.json_manifest_file}") ? 
-          jsondecode(file("${path}${local.json_manifest_file}")) :
-          null
+      fileexists("${path}${local.yml_manifest_file}") ? 
+        yamldecode(file("${path}${local.yml_manifest_file}")) :
+          fileexists("${path}${local.yaml_manifest_file}") ? 
+            yamldecode(file("${path}${local.yaml_manifest_file}")) :
+              fileexists("${path}${local.json_manifest_file}") ? 
+                jsondecode(file("${path}${local.json_manifest_file}")) :
+                  null
   ]
   # Prepend defaults
   pX = concat([ var.defaults ], local.p4)
