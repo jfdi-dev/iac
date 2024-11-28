@@ -1,7 +1,9 @@
 
 
 output s3-bucket {
-  value = module.statics.bucket_name
+  value = [
+    for k, v in module.statics : v.bucket_name
+  ][0]
 }
 
 output cloudfront-distribution {
