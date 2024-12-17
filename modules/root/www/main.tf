@@ -64,7 +64,7 @@ module cdn {
   
   static = tolist([
     {
-      fqdn = module.static.fqdn
+      fqdn = local.fqdn
       bucket_name = module.static.bucket_name
     }
   ])
