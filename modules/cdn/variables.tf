@@ -61,5 +61,5 @@ variable "api" {
 variable auth_lambda_arns {
   type = set(string)
   nullable = true
-  default = null
+  default = toset([])
 }
