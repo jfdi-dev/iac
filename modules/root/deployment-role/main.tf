@@ -19,11 +19,12 @@ module manifest {
 }
 
 locals {
-  policies = merge(module.manifest.value.deployment.policies, {
-    named: [
+  secret_policies = contains(keys(module.manifest.value), "secrets") ? [
       for secret in module.manifest.value.secrets:
       "read-context-secret-${secret}"
-    ]
+    ] : []
+  policies = merge(module.manifest.value.deployment.policies, {
+    named: secret_policies 
   })
 }
 
