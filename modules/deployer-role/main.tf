@@ -12,6 +12,13 @@ locals {
       }
     ]
   })
+
+  policies = {
+    custom = coalesce(var.policies.custom, {})
+    named = coalesce(var.policies.named, [])
+    managed = coalesce(var.policies.managed, [])
+    service = coalesce(var.policies.service, [])
+  }
 }
 
 resource "aws_iam_role" "deployment-role" {
@@ -19,61 +26,15 @@ resource "aws_iam_role" "deployment-role" {
   assume_role_policy = local.assume-role-policy
 }
 
-module project-context-name {
-  source = "../project-context"
-}
-
-module local_resource_share_arn {
-  source = "../arn"
-
-  service = "ram"
-  resource_type = "resource-share"
-  resource_id = "*"
-}
-
-module tooling_resource_share_arn {
-  source = "../arn"
-
-  account = var.tooling_account
-  service = "ram"
-  resource_type = "resource-share"
-  resource_id = "*"
-}
-
-module project_context_parameter_arn {
-  source = "../arn"
-  
-  account = var.tooling_account
-  service = "ssm"
-  resource_type = "parameter"
-  resource_id = module.project-context-name.parameter_name
-}
-
 module identity_policies {
   source = "../identity-policies"
 
   identity = aws_iam_role.deployment-role.name
-
-  policies = merge(var.policies,
-  {
-    custom = {
-      read-project-context = [
-        {
-          effect = "Allow"
-          actions = ["ram:GetResourceShares"]
-          resources = [module.local_resource_share_arn.value]
-        },
-        {
-          effect = "Allow"
-          actions = ["ram:ListResources"]
-          resources = [module.tooling_resource_share_arn.value]
-        },
-        {
-          effect = "Allow"
-          actions = ["ssm:GetParameter"]
-          resources = [module.project_context_parameter_arn.value]
-        }
-      ]
-    }
-  })
+ 
+  policies = {
+    custom = local.policies.custom
+    named = setunion(local.policies.named, toset(["read-project-context"]))
+    managed = local.policies.managed
+    service = local.policies.service
+  }
 }

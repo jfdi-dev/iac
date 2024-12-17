@@ -26,10 +26,12 @@ variable policies {
     )
     named = optional(set(string))
     managed = optional(set(string))
+    service = optional(set(string))
   })
   default = {
     custom = {}
     named = []
     managed = []
+    service = []
   }
 }
