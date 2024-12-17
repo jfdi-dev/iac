@@ -194,7 +194,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 
 data aws_iam_policy_document bucket_policy {
   for_each = {
-    for static in local.statics:
+    for static in tolist(local.statics):
     static.fqdn => static.bucket_name
   }
   statement {
@@ -216,7 +216,7 @@ data aws_iam_policy_document bucket_policy {
 
 resource aws_s3_bucket_policy content {
   for_each = {  
-    for static in local.statics:
+    for static in tolist(local.statics):
     static.fqdn => static.bucket_name
   }
   bucket = each.value
