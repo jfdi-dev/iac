@@ -60,4 +60,6 @@ variable "api" {
 # but it will do for now...
 variable auth_lambda_arns {
   type = set(string)
+  nullable = true
+  default = null
 }
