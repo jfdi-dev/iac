@@ -12,4 +12,5 @@ variable subdomain {
 
 variable context_secrets_file {
   type = string
+  default = null
 }

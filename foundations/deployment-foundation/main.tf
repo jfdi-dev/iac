@@ -25,7 +25,7 @@ module dns-delegate {
 module context-secrets {
   source = "../../modules/context-secrets/writer"
 
-  count = var.context_secrets_file == "" ? 0 : 1
+  count = var.context_secrets_file == null ? 0 : 1
 
   file = var.context_secrets_file
 }
