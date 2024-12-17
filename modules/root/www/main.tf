@@ -60,7 +60,7 @@ module cdn {
   }
   source = "../../cdn"
 
-  protected = false
+  # protected = false
   fqdn = local.fqdn
   
   static = [
