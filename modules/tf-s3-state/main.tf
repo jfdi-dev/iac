@@ -34,7 +34,7 @@ data aws_iam_policy_document s3_bucket_cross_account_access {
     ]
     resources = [
       "arn:aws:s3:::${local.s3_bucket_name}",
-      "arn:aws:s3:::${local.s3_bucket_name}/${var.project}/*/*"
+      "arn:aws:s3:::${local.s3_bucket_name}/*"
     ]
     principals {
       type = "AWS"
