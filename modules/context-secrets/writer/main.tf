@@ -1,6 +1,7 @@
 
 locals {
-  context = yamldecode(file("${path.root}/${var.file}"))
+  context_secrets_file = "${path.root}/${var.file}"
+  context = fileexists(local.context_secrets_file) ? yamldecode(file(local.context_secrets_file)) : {}
 }
 
 resource aws_secretsmanager_secret context_secret {
