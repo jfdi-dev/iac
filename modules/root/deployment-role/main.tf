@@ -24,7 +24,7 @@ locals {
       "read-context-secret-${secret}"
     ] : []
   policies = merge(module.manifest.value.deployment.policies, {
-    named: secret_policies 
+    named: local.secret_policies 
   })
 }
 
