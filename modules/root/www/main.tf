@@ -56,7 +56,6 @@ module cdn {
 
   providers = {
     aws.tls = aws.north-virginia
-    aws.edge = aws.north-virginia
   }
   source = "../../cdn"
 
@@ -66,6 +65,7 @@ module cdn {
   static = [
     {
       fqdn = module.static.fqdn
+      bucket_name = module.static.bucket_name
     }
   ]
 }
