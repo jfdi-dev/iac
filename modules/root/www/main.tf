@@ -62,12 +62,7 @@ module cdn {
   # protected = false
   fqdn = local.fqdn
   
-  static = tolist([
-    {
-      fqdn = local.fqdn
-      bucket_name = module.static.bucket_name
-    }
-  ])
+  _static = { "${local.fqdn}" = module.static }
 }
 
 module dns {

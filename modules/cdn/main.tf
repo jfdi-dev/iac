@@ -1,9 +1,9 @@
 locals {
-  has_static = length(var.static) > 0
-  has_api = length(var.api) > 0
+  has_static = length(var._static) > 0
+  has_api = length(var._api) > 0
 
-  statics = [ for s in var.static: merge(s, { type = "static" }) ]
-  apis = [ for a in var.api: merge(a, { type = "api" }) ]
+  statics = { for k, s in var._static: k => merge(s, { type = "static" }) }
+  apis = { for k, a in var._api: k => merge(a, { type = "api" }) }
   origins = concat(local.statics, local.apis)
 
   non_prefixed_origin = [
@@ -21,7 +21,7 @@ locals {
 }
 
 resource "aws_cloudfront_origin_access_control" "static_oac" {
-  for_each = { for idx, origin in local.statics: idx => origin }
+  for_each = local.statics
 
   name = "s.oac.${each.value.fqdn}"
   origin_access_control_origin_type = "s3"
@@ -74,7 +74,9 @@ resource "aws_acm_certificate_validation" "tls_cert" {
 
 resource "aws_cloudfront_distribution" "cdn" {
 
-  depends_on = [  aws_acm_certificate_validation.tls_cert ]
+  depends_on = [  
+    aws_acm_certificate_validation.tls_cert
+  ]
   
   dynamic "origin" {
     for_each = local.statics
@@ -193,10 +195,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 }
 
 data aws_iam_policy_document bucket_policy {
-  for_each = {
-    for static in tolist(local.statics):
-    static.fqdn => static.bucket_name
-  }
+  for_each = local.statics
   statement {
     principals {
       type = "Service"
@@ -204,7 +203,7 @@ data aws_iam_policy_document bucket_policy {
     }
     actions = [ "s3:GetObject" ]
     resources = [ 
-      "arn:aws:s3:::${each.value}/*" 
+      "arn:aws:s3:::${each.value.bucket_name}/*" 
     ]
     condition {
       test = "StringEquals"
@@ -215,10 +214,7 @@ data aws_iam_policy_document bucket_policy {
 }
 
 resource aws_s3_bucket_policy content {
-  for_each = {  
-    for static in tolist(local.statics):
-    static.fqdn => static.bucket_name
-  }
-  bucket = each.value
+  for_each = local.statics
+  bucket = each.value.bucket_name
   policy = data.aws_iam_policy_document.bucket_policy[each.key].json
 }

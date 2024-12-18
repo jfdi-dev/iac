@@ -51,22 +51,22 @@ module "statics" {
 }
 
 locals {
-  apis = [ 
+  apis = {
     for key, value in var.apis: 
-    merge(
+    key => merge(
       value, 
       module.apis[key], 
       { name: key }
     )
-  ]
-  statics = [
+  }
+  statics = {
     for key, value in var.statics:
-    merge(
+    key => merge(
       value, 
       module.statics[key], 
       { name: key }
     )
-  ]
+  }
 }
 
 module auth {
@@ -104,7 +104,7 @@ module "cdn" {
   fqdn = var.fqdn
   auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
 
-  api = local.apis 
+  _api = local.apis 
   # [ 
   #   for name, api in var.apis: 
   #     {
@@ -112,7 +112,7 @@ module "cdn" {
   #       path = api.path
   #     } 
   # ]
-  static = local.statics
+  _static = local.statics
   # [ 
   #   for name, static in var.statics: 
   #     {
