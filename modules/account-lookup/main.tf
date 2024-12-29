@@ -1,10 +1,10 @@
 
-data aws_organizations_organization org {}
+data "aws_organizations_organization" "org" {}
 
 locals {
   accounts = data.aws_organizations_organization.org.non_master_accounts
   accounts_by_name = tomap({
-    for account in local.accounts:
+    for account in local.accounts :
     account.name => account
   })
 
