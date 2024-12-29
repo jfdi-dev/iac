@@ -1,8 +1,8 @@
 
 variable "basepath" {
-  type = string
+  type     = string
   nullable = true
-  default = "./"
+  default  = "./"
 }
 
 variable "name" {

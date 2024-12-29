@@ -8,36 +8,36 @@ locals {
   fixed_spec = merge(
     local.openapi_spec,
     {
-      paths = { 
-        for path, ops in local.openapi_spec.paths:
-        path => { 
-          for method, settings in ops:
+      paths = {
+        for path, ops in local.openapi_spec.paths :
+        path => {
+          for method, settings in ops :
           method => merge({
-            for setting, values in settings:
+            for setting, values in settings :
             setting => values
             if setting != "security"
-          }, {
+            }, {
             security = contains(keys(settings), "security") ? [
-              for schemes in settings["security"]:
-                {
-                  # Finally, we empty out the scopes. fml.
-                  for name, scopes in schemes:
-                  name => []
-                }
-            ]: []
+              for schemes in settings["security"] :
+              {
+                # Finally, we empty out the scopes. fml.
+                for name, scopes in schemes :
+                name => []
+              }
+            ] : []
           })
         }
       }
     }
   )
   operations = flatten([
-    for path, methods in local.raw_spec.paths: 
+    for path, methods in local.raw_spec.paths :
     [
-      for method, op in methods:
+      for method, op in methods :
       {
-        path = path,
+        path   = path,
         method = method,
-        op = op
+        op     = op
       }
     ]
   ])
@@ -49,25 +49,25 @@ resource "aws_api_gateway_rest_api" "api" {
   body = jsonencode(local.fixed_spec)
 
   endpoint_configuration {
-    types = [ "REGIONAL" ]
+    types = ["REGIONAL"]
   }
 }
 
 locals {
   scopes_map = {
-    for item in local.operations:
-    item.op.operationId => 
-      contains(keys(item.op), "security") ?
-        flatten([ 
-          for scheme in item.op.security:
-            [ for name, scopes in scheme: scopes ]
-          ]
-        )
-      : []
+    for item in local.operations :
+    item.op.operationId =>
+    contains(keys(item.op), "security") ?
+    flatten([
+      for scheme in item.op.security :
+      [for name, scopes in scheme : scopes]
+      ]
+    )
+    : []
   }
 }
 
-module jwt-auth {
+module "jwt-auth" {
   source = "../../lambda/auth/jwt"
 
   scopes-map = local.scopes_map
@@ -86,30 +86,30 @@ data "aws_api_gateway_authorizers" "authorizers" {
 }
 
 data "aws_api_gateway_resource" "resources" {
-  for_each = local.openapi_spec.paths
+  for_each    = local.openapi_spec.paths
   rest_api_id = aws_api_gateway_rest_api.api.id
-  path = each.key
+  path        = each.key
 }
 
 module "lambda_service" {
   source = "../../lambda/service"
 
-  name = var.name
-  src = var.basepath
-  functions = toset(local.operations[*].op.operationId) 
+  name      = var.name
+  src       = var.basepath
+  functions = toset(local.operations[*].op.operationId)
 }
 
 resource "aws_api_gateway_integration" "integrations" {
   for_each = {
-    for operation in local.operations: operation.op.operationId => operation
+    for operation in local.operations : operation.op.operationId => operation
   }
   rest_api_id = aws_api_gateway_rest_api.api.id
-  type = "AWS_PROXY"
+  type        = "AWS_PROXY"
   resource_id = data.aws_api_gateway_resource.resources[each.value.path].id
   http_method = upper(each.value.method)
   # Must always use post to downstream lambda?
   integration_http_method = "POST" #upper(each.value.method)
-  uri = module.lambda_service.handlers[each.key].invoke_arn
+  uri                     = module.lambda_service.handlers[each.key].invoke_arn
   # Apparently, execution role is not needed...
   #credentials = module.lambda_service.handlers[each.key].role
 }
@@ -137,8 +137,8 @@ resource "aws_api_gateway_deployment" "deployment" {
       [
         aws_api_gateway_rest_api.api.body
       ],
-      [ 
-        for integration in aws_api_gateway_integration.integrations: integration.id 
+      [
+        for integration in aws_api_gateway_integration.integrations : integration.id
       ]
     )))
   }
@@ -150,7 +150,7 @@ resource "aws_api_gateway_deployment" "deployment" {
 
 resource "aws_api_gateway_stage" "stage" {
   deployment_id = aws_api_gateway_deployment.deployment.id
-  rest_api_id = aws_api_gateway_rest_api.api.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
 
   # use env name ?
   stage_name = var.env
@@ -170,9 +170,9 @@ resource "aws_lambda_permission" "lambda_permission" {
 }
 
 resource "aws_lambda_permission" "authorizer_permission" {
-  action = "lambda:InvokeFunction"
+  action        = "lambda:InvokeFunction"
   function_name = module.jwt-auth.function.function_name
-  principal = "apigateway.amazonaws.com"
+  principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/authorizers/${data.aws_api_gateway_authorizers.authorizers.ids[0]}"
 }
