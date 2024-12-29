@@ -1,9 +1,9 @@
 locals {
-  has_static = length(var._static) > 0
-  has_api = length(var._api) > 0
+  has_static = length(var.static) > 0
+  has_api = length(var.api) > 0
 
-  statics = { for k, s in var._static: k => merge(s, { type = "static" }) }
-  apis = { for k, a in var._api: k => merge(a, { type = "api" }) }
+  statics = { for k, s in var.static: k => merge(s, { type = "static" }) }
+  apis = { for k, a in var.api: k => merge(a, { type = "api" }) }
   origins = concat(local.statics, local.apis)
 
   non_prefixed_origin = [

@@ -25,7 +25,7 @@ variable "fqdn" {
 #   nullable = true
 # }
 
-variable "_static" {
+variable "static" {
   type = map(object({
     fqdn = string
     bucket_name = string
@@ -66,7 +66,7 @@ variable "_static" {
 #   }
 # }
 
-variable "_api" {
+variable "api" {
   type = map(object({
     fqdn = string
     path = optional(string, null)
@@ -75,13 +75,13 @@ variable "_api" {
   nullable = true
 
   validation {
-    condition = length(concat(var._api, var._static)) > 0
+    condition = length(concat(var.api, var.static)) > 0
     error_message = "At least one `static` or one `api` must be specified."
   }
 
   validation {
     condition = length([
-      for o in concat(var._api, var._static): o 
+      for o in concat(var.api, var.static): o 
       if o.path == null 
     ]) <= 1
     # condition = length(var.api) <= 1 || length(
@@ -92,7 +92,7 @@ variable "_api" {
   }
 
   validation {
-    condition = length(concat(var._api, var._static)) - length(distinct([ for o in concat(var._api, var._static): o.path ])) <= 1
+    condition = length(concat(var.api, var.static)) - length(distinct([ for o in concat(var.api, var.static): o.path ])) <= 1
     error_message = "All paths must be unique."
   }
 }
