@@ -1,30 +1,30 @@
 
-variable project {
+variable "project" {
   type = string
 }
 
-variable tldp1 {
+variable "tldp1" {
   type = string
 }
 
-variable github_owner {
+variable "github_owner" {
   type = string
 }
 
-variable secondary_region {
-  type = string
+variable "secondary_region" {
+  type     = string
   nullable = true
-  default = null
+  default  = null
 }
 
-variable github_repo {
-  type = string
+variable "github_repo" {
+  type     = string
   nullable = true
-  default = null
+  default  = null
 }
 
-variable github_branch {
-  type = string
+variable "github_branch" {
+  type     = string
   nullable = true
-  default = null
+  default  = null
 }

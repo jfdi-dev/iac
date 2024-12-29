@@ -4,7 +4,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias = "virginia"
+  alias  = "virginia"
   region = "us-east-1"
 }
 
@@ -12,19 +12,19 @@ module "petstore_app" {
   source = "../modules/domain-service"
 
   providers = {
-    aws = aws.default
-    aws.tls = aws.virginia
+    aws      = aws.default
+    aws.tls  = aws.virginia
     aws.edge = aws.virginia
   }
 
-  fqdn = "app.jfdi.jaskwa.com"
-  protected = false
+  fqdn                    = "app.jfdi.jaskwa.com"
+  protected               = false
   disaster_recovery_level = "bronze"
 
   statics = {
     app = {
       path = "*"
-      src = "./src/static/"
+      src  = "./src/static/"
     }
   }
 
@@ -32,7 +32,7 @@ module "petstore_app" {
     petstore = {
       # type = "rest"
       path = "*"
-      src = "./src/api/"
+      src  = "./src/api/"
       spec = "petstore_spec.yaml"
     }
   }
@@ -40,7 +40,7 @@ module "petstore_app" {
   datastores = {
     pets = {
       type = "rdbms"
-      src = "./src/db"
+      src  = "./src/db"
     }
   }
 }
