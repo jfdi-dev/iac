@@ -5,6 +5,6 @@ terraform {
     }
     assert = {
       source = "hashicorp/assert"
-    }   
+    }
   }
 }

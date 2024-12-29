@@ -1,41 +1,41 @@
 
-variable fqdn {
+variable "fqdn" {
   type = string
 }
 
-variable api {
+variable "api" {
   type = object({
-    name = string
-    fqdn = string
-    path = string
+    name   = string
+    fqdn   = string
+    path   = string
     scopes = set(string)
   })
 }
 
-variable client {
+variable "client" {
   type = object({
-    name = string
-    fqdn = string
-    scopes = set(string)
+    name       = string
+    fqdn       = string
+    scopes     = set(string)
     short_name = string
   })
 }
 
-variable dns {
+variable "dns" {
   type = object({
-    custom = bool
+    custom    = bool
     subdomain = string
-    ttl = number
+    ttl       = number
   })
   default = {
-    custom = true
+    custom    = true
     subdomain = "auth"
-    ttl = 300
+    ttl       = 300
   }
 }
 
-variable connections {
-  type = set(string)
+variable "connections" {
+  type    = set(string)
   default = ["database"]
 }
 

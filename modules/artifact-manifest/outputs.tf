@@ -1,9 +1,9 @@
 
-output value {
+output "value" {
   value = local.values
 
   precondition {
-    condition = local.values.artifact != null
+    condition     = local.values.artifact != null
     error_message = "Manifest file required `artifact` property"
   }
 }

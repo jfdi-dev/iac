@@ -1,4 +1,4 @@
 
-output value {
+output "value" {
   value = local.value
 }
