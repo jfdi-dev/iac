@@ -5,8 +5,8 @@ variable "fqdn" {
 
 variable "alias_to" {
   type = object({
-    _tag = string
+    _tag     = string
     dns_name = optional(string)
-    zone_id = optional(string)
+    zone_id  = optional(string)
   })
 }

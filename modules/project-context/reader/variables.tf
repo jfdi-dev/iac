@@ -1,5 +1,5 @@
 
-variable is_tooling {
-  type = bool
+variable "is_tooling" {
+  type    = bool
   default = false
 }

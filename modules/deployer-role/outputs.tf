@@ -1,5 +1,5 @@
 
-output role_arn {
+output "role_arn" {
   value = aws_iam_role.deployment-role.arn
 }
 

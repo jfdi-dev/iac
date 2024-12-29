@@ -1,4 +1,4 @@
 
-output parameter_name {
+output "parameter_name" {
   value = local.parameter_name
 }

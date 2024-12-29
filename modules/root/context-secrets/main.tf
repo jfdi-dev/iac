@@ -1,20 +1,20 @@
 terraform {
-  backend s3 {
+  backend "s3" {
   }
 }
 
 
-provider aws {
+provider "aws" {
   assume_role {
     role_arn = var.role
   }
 }
 
-module manifest {
+module "manifest" {
   source = "../../artifact-manifest"
 }
 
-module context-secrets {
+module "context-secrets" {
   source = "../../context-secrets/reader"
 
   context_secrets = module.manifest.value.secrets

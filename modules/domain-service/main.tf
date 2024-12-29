@@ -35,10 +35,10 @@ module "apis" {
 
   for_each = var.apis
 
-  env = var.env
-  name = each.key
+  env          = var.env
+  name         = each.key
   openapi_spec = each.value.spec
-  basepath = "${path.root}/${each.value.src}"
+  basepath     = "${path.root}/${each.value.src}"
 }
 
 module "statics" {
@@ -47,44 +47,44 @@ module "statics" {
   for_each = var.statics
 
   name = each.key
-  dr = module.dr
+  dr   = module.dr
 }
 
 locals {
   apis = {
-    for key, value in var.apis: 
+    for key, value in var.apis :
     key => merge(
-      value, 
-      module.apis[key], 
-      { name: key }
+      value,
+      module.apis[key],
+      { name : key }
     )
   }
   statics = {
-    for key, value in var.statics:
+    for key, value in var.statics :
     key => merge(
-      value, 
-      module.statics[key], 
-      { name: key }
+      value,
+      module.statics[key],
+      { name : key }
     )
   }
 }
 
-module auth {
-  count = var.protected ? 1 : 0
+module "auth" {
+  count  = var.protected ? 1 : 0
   source = "../auth"
 
   fqdn = var.fqdn
 
   # should have a policy of not reach >1 level into the manifest (ie: pass in auth here, not connections)
   connections = var.manifest.value.auth.connections
-  
+
   # Limited to first api + first static, for now
-  api = local.apis[0]
+  api    = local.apis[0]
   client = local.statics[0]
 }
 
 module "oidc_lambda" {
-  count = var.protected ? 1 : 0
+  count  = var.protected ? 1 : 0
   source = "../lambda/auth/oidc"
 
   providers = {
@@ -101,10 +101,10 @@ module "cdn" {
   }
   source = "../cdn"
 
-  fqdn = var.fqdn
+  fqdn             = var.fqdn
   auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
 
-  _api = local.apis 
+  _api = local.apis
   # [ 
   #   for name, api in var.apis: 
   #     {
@@ -127,6 +127,6 @@ module "cdn" {
 module "dns" {
   source = "../dns"
 
-  fqdn = var.fqdn
+  fqdn     = var.fqdn
   alias_to = module.cdn
 }

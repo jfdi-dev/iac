@@ -1,4 +1,4 @@
 
-output level {
+output "level" {
   value = local.level
 }

@@ -15,6 +15,6 @@ output "is_at_least_silver" {
   value = local.is_at_least_silver
 }
 
-output level {
+output "level" {
   value = var.level
 }

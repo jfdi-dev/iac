@@ -1,11 +1,11 @@
 
 variable "level" {
-  type = string
+  type     = string
   nullable = false
-  default = "bronze"
+  default  = "bronze"
 
   validation {
-    condition = contains(["bronze", "silver", "gold"], var.level)
+    condition     = contains(["bronze", "silver", "gold"], var.level)
     error_message = "Input `level` must be one of `bronze`, `silver`, or `gold`"
   }
 }

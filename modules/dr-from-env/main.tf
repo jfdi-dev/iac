@@ -1,7 +1,7 @@
 
 locals {
   level_from_env = tomap({
-    dev = "bronze"
+    dev  = "bronze"
     test = "silver"
     prod = "gold"
   })

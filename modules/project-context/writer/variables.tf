@@ -1,41 +1,41 @@
 
-variable project {
+variable "project" {
   type = string
 }
 
-variable tldp1 {
+variable "tldp1" {
   type = string
 }
 
-variable tooling_account {
+variable "tooling_account" {
   type = string
 }
 
-variable security_account {
+variable "security_account" {
   type = string
 }
 
-variable networking_account {
+variable "networking_account" {
   type = string
 }
 
-variable dev_account {
+variable "dev_account" {
   type = string
 }
 
-variable test_account {
+variable "test_account" {
   type = string
 }
 
-variable prod_account {
+variable "prod_account" {
   type = string
 }
 
-variable regions {
+variable "regions" {
   type = map(string)
 }
 
-variable terraform {
+variable "terraform" {
   type = object({
     state = string
     locks = string

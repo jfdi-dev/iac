@@ -4,49 +4,49 @@ variable "fqdn" {
 }
 
 variable "protected" {
-  type = bool
+  type     = bool
   nullable = false
-  default = true
+  default  = true
 }
 
 variable "disaster_recovery_level" {
-  type = string
+  type     = string
   nullable = false
 }
 
-variable env {
+variable "env" {
   type = string
 }
 
 variable "statics" {
   type = map(object({
-    path = string
-    src = string
-    scopes = set(string)
+    path       = string
+    src        = string
+    scopes     = set(string)
     short_name = string
   }))
   nullable = true
-  default = {}
+  default  = {}
 }
 
 variable "apis" {
   type = map(object({
-    path = string
-    src = string
-    spec = string
+    path   = string
+    src    = string
+    spec   = string
     scopes = set(string)
   }))
   nullable = true
-  default = {}  
+  default  = {}
 }
 
 variable "datastores" {
   type = map(object({
     type = string
-    src = string
+    src  = string
   }))
   nullable = true
-  default = {}
+  default  = {}
 }
 
 variable "manifest" {

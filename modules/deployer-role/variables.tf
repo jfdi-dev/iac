@@ -1,36 +1,36 @@
 
-variable project {
+variable "project" {
   type = string
 }
 
-variable tooling_account {
+variable "tooling_account" {
   type = string
 }
 
-variable artifact_name {
+variable "artifact_name" {
   type = string
 }
 
-variable policies {
+variable "policies" {
   type = object({
     custom = optional(
       map(
         list(
           object({
-            effect = string
-            actions = set(string)
+            effect    = string
+            actions   = set(string)
             resources = set(string)
           })
         )
       )
     )
-    named = optional(set(string))
+    named   = optional(set(string))
     managed = optional(set(string))
     service = optional(set(string))
   })
   default = {
-    custom = {}
-    named = []
+    custom  = {}
+    named   = []
     managed = []
     service = []
   }

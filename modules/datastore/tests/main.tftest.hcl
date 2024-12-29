@@ -15,7 +15,7 @@ run "rdbms_and_document_mutually_exclusive" {
 
   variables {
     document = { x = 1 }
-    rdbms = { y = 1 }
+    rdbms    = { y = 1 }
   }
 
   expect_failures = [

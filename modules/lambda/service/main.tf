@@ -13,18 +13,18 @@ locals {
 }
 
 data "archive_file" "lambda" {
-  type = "zip"
-  source_dir = var.src
+  type        = "zip"
+  source_dir  = var.src
   output_path = "./${var.name}.zip"
 
   lifecycle {
     precondition {
-      condition = provider::local::direxists(var.src)
+      condition     = provider::local::direxists(var.src)
       error_message = "The `src` directory ('${var.src}') does not exist"
     }
 
     postcondition {
-      condition = fileexists(self.output_path)
+      condition     = fileexists(self.output_path)
       error_message = "The service archive file ('${self.output_path}') was not created"
     }
   }
@@ -32,12 +32,12 @@ data "archive_file" "lambda" {
 
 module "lambda_function" {
   for_each = toset(var.functions)
-  
+
   source = "../function"
 
-  name = "${var.name}-${each.key}"
-  src = var.src
-  handler = "${each.key}/index.handler"
+  name         = "${var.name}-${each.key}"
+  src          = var.src
+  handler      = "${each.key}/index.handler"
   apigw_lambda = true
 
   # settings = fileexists("${var.src}handlers/${each.key}/manifest.yml") ? yamldecode(file("${var.src}handlers/${each.key}/manifest.yml")) : {

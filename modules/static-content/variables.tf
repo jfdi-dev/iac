@@ -1,10 +1,10 @@
 
 variable "name" {
-  type = string
+  type     = string
   nullable = false
 
   validation {
-    condition = var.name != null && trimspace(var.name) != ""
+    condition     = var.name != null && trimspace(var.name) != ""
     error_message = "Input `name` is required"
   }
 }

@@ -7,27 +7,27 @@ variable "defaults" {
   type = object({
     environment = map(string)
     runtime = object({
-      name = string
-      timeout = number
+      name        = string
+      timeout     = number
       memory_size = number
     })
     concurrency = object({
-      reserved = number
+      reserved    = number
       provisioned = number
     })
     policies = object({
-       custom = optional(
+      custom = optional(
         map(
           list(
             object({
-              effect = string
-              actions = set(string)
+              effect    = string
+              actions   = set(string)
               resources = set(string)
             })
           )
         )
       )
-      named = optional(set(string))
+      named   = optional(set(string))
       managed = optional(set(string))
       service = optional(set(string))
     })
@@ -36,17 +36,17 @@ variable "defaults" {
     environment = {
     }
     runtime = {
-      name = "nodejs20.x"
-      timeout = 5
+      name        = "nodejs20.x"
+      timeout     = 5
       memory_size = 128
     }
     concurrency = {
       provisioned = 0
-      reserved = -1
+      reserved    = -1
     }
     policies = {
-      custom = {}
-      named = []
+      custom  = {}
+      named   = []
       managed = []
       service = []
     }

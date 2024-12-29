@@ -1,5 +1,5 @@
 
-variable context_secrets {
-  type = list(string)
+variable "context_secrets" {
+  type    = list(string)
   default = []
 }

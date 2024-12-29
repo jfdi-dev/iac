@@ -1,4 +1,4 @@
 
-variable role {
+variable "role" {
   type = string
 }

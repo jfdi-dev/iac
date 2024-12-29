@@ -1,14 +1,14 @@
 
-data aws_caller_identity current {}
+data "aws_caller_identity" "current" {}
 
-data aws_organizations_organization org {}
+data "aws_organizations_organization" "org" {}
 
 locals {
-  s3_bucket_name = "state.terraform.${var.project}"
+  s3_bucket_name    = "state.terraform.${var.project}"
   dynamo_table_name = "lock.state.terraform.${var.project}"
 }
 
-resource aws_s3_bucket terraform_state {
+resource "aws_s3_bucket" "terraform_state" {
   bucket = local.s3_bucket_name
 
   lifecycle {
@@ -16,7 +16,7 @@ resource aws_s3_bucket terraform_state {
   }
 }
 
-resource aws_s3_bucket_versioning terraform_state {
+resource "aws_s3_bucket_versioning" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
   versioning_configuration {
@@ -24,10 +24,10 @@ resource aws_s3_bucket_versioning terraform_state {
   }
 }
 
-data aws_iam_policy_document s3_bucket_cross_account_access {
+data "aws_iam_policy_document" "s3_bucket_cross_account_access" {
   statement {
     effect = "Allow"
-    actions = [ 
+    actions = [
       "s3:ListBucket",
       "s3:GetObject",
       "s3:PutObject"
@@ -39,24 +39,24 @@ data aws_iam_policy_document s3_bucket_cross_account_access {
     principals {
       type = "AWS"
       identifiers = [
-        for account in data.aws_organizations_organization.org.non_master_accounts:
+        for account in data.aws_organizations_organization.org.non_master_accounts :
         account.id
       ]
     }
   }
 }
 
-resource aws_s3_bucket_policy terraform_state {
+resource "aws_s3_bucket_policy" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.bucket
   policy = data.aws_iam_policy_document.s3_bucket_cross_account_access.json
 }
 
-resource aws_dynamodb_table terraform_state_locks {
+resource "aws_dynamodb_table" "terraform_state_locks" {
   name = local.dynamo_table_name
 
-  read_capacity = 1
+  read_capacity  = 1
   write_capacity = 1
-  hash_key = "LockID"
+  hash_key       = "LockID"
 
   attribute {
     name = "LockID"
@@ -64,7 +64,7 @@ resource aws_dynamodb_table terraform_state_locks {
   }
 }
 
-data aws_iam_policy_document dynamodb_cross_account_access {
+data "aws_iam_policy_document" "dynamodb_cross_account_access" {
   statement {
     effect = "Allow"
     actions = [
@@ -79,14 +79,14 @@ data aws_iam_policy_document dynamodb_cross_account_access {
     principals {
       type = "AWS"
       identifiers = [
-        for account in data.aws_organizations_organization.org.non_master_accounts:
+        for account in data.aws_organizations_organization.org.non_master_accounts :
         account.id
       ]
     }
   }
 }
 
-resource aws_dynamodb_resource_policy cross_account_access {
+resource "aws_dynamodb_resource_policy" "cross_account_access" {
   resource_arn = aws_dynamodb_table.terraform_state_locks.arn
-  policy = data.aws_iam_policy_document.dynamodb_cross_account_access.json
+  policy       = data.aws_iam_policy_document.dynamodb_cross_account_access.json
 }

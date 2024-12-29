@@ -1,9 +1,9 @@
 
-variable project {
+variable "project" {
   type = string
 }
 
-variable tooling_account {
+variable "tooling_account" {
   type = string
 }
 

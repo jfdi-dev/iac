@@ -1,6 +1,6 @@
 
 variable "secret" {
-  type = string
+  type     = string
   nullable = true
-  default = "oidc-config"
+  default  = "oidc-config"
 }

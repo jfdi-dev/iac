@@ -1,5 +1,5 @@
 
-variable scopes-map {
-  type = map(list(string))
+variable "scopes-map" {
+  type    = map(list(string))
   default = {}
 }

@@ -1,3 +1,3 @@
-variable file {
+variable "file" {
   type = string
 }

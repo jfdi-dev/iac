@@ -1,7 +1,7 @@
-variable subdomain {
+variable "subdomain" {
   type = string
 }
 
-variable networking_account {
+variable "networking_account" {
   type = string
 }
