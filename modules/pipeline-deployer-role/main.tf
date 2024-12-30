@@ -3,11 +3,11 @@ provider "aws" {
 }
 
 module "project-context" {
-  source = "github.com/jfdi-dev/iac/modules/project-context@main"
+  source = "../project-context"
 }
 
 module "artifact-manifest" {
-  source = "github.com/jfdi-dev/iac/modules/artifact-manifest@main"
+  source = "../artifact-manifest"
 }
 
 module "deployer-role" {

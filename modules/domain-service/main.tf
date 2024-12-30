@@ -104,7 +104,7 @@ module "cdn" {
   fqdn             = var.fqdn
   auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
 
-  _api = local.apis
+  api = local.apis
   # [ 
   #   for name, api in var.apis: 
   #     {
@@ -112,7 +112,7 @@ module "cdn" {
   #       path = api.path
   #     } 
   # ]
-  _static = local.statics
+  static = local.statics
   # [ 
   #   for name, static in var.statics: 
   #     {

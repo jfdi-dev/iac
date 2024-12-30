@@ -11,11 +11,11 @@
 module "document-db" {
   count = var.document != null ? 1 : 0
 
-  source = "./document-datastore"
+  source = "./document"
 }
 
 module "rdbms-db" {
   count = var.rdbms != null ? 1 : 0
 
-  source = "./rdbms-datastore"
+  source = "./rdbms"
 }
