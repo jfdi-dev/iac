@@ -1,4 +1,7 @@
-
+mock_provider "aws" {}
+mock_provider "aws" {
+  alias = "tls"
+}
 
 variables {
   service = "iam"
@@ -12,7 +15,7 @@ run "service_only_will_find_account_and_region" {
   }
 
   assert {
-    condition = provider::assert::regex("arn:aws:iam:.+?:\\d{12}:\\*", output.value)
+    condition = provider::assert::regex("arn:aws:iam:.+?:.+?:\\*", output.value)
     error_message = "Arn value did not match expectations"
   }
 }

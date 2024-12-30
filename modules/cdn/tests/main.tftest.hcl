@@ -4,7 +4,7 @@ mock_provider "aws" {
 }
 
 run "static_or_api_required" {
-  command = plan
+  command = apply
 
   variables {
     protected = false
