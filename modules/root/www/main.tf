@@ -62,7 +62,7 @@ module "cdn" {
   # protected = false
   fqdn = local.fqdn
 
-  _static = { "${local.fqdn}" = module.static }
+  static = { "${local.fqdn}" = module.static }
 }
 
 module "dns" {
