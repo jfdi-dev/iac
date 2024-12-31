@@ -125,7 +125,7 @@ module "cdn" {
 }
 
 module "dns" {
-  source = "../dns"
+  source = "../dns/alias"
 
   fqdn     = var.fqdn
   alias_to = module.cdn

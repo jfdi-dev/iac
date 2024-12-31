@@ -4,7 +4,7 @@ module "project-context" {
 }
 
 module "dns-root" {
-  source = "../../modules/dns_copy/root"
+  source = "../../modules/dns/root"
 
   tldp1 = module.project-context.value.tldp1
 }

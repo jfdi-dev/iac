@@ -14,7 +14,7 @@ module "iam-deployer-role" {
 }
 
 module "dns-delegate" {
-  source = "../../modules/dns_copy/delegate"
+  source = "../../modules/dns/delegate"
 
   count = var.subdomain == null ? 0 : 1
 

@@ -1,5 +1,7 @@
 
-data "aws_organizations_organization" "org" {}
+# Test
+data "aws_organizations_organization" "org" {
+}
 
 locals {
   accounts = data.aws_organizations_organization.org.non_master_accounts

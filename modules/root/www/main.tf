@@ -70,7 +70,7 @@ module "dns" {
     module.cdn
   ]
 
-  source = "../../dns"
+  source = "../../dns/alias"
 
   fqdn     = local.fqdn
   alias_to = module.cdn

@@ -1,3 +1,7 @@
+mock_provider "aws" {}
+mock_provider "aws" {
+  alias = "tls"
+}
 
 run "outputs-are-set" {
   command = apply
