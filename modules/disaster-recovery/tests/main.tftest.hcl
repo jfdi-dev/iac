@@ -1,3 +1,6 @@
+mock_provider "aws" {
+  
+}
 
 run "input_validation" {
   command = plan
