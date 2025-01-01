@@ -38,7 +38,7 @@ locals {
 
   accounts = {
     for marker, accounts in local.marker_accounts :
-    marker => length(accounts) <= 1 ? one(accounts) : null
+    marker => try(one(accounts), null)
   }
 }
 

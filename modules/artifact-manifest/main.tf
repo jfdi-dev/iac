@@ -1,4 +1,17 @@
 
+# 
+# `Artifact Manifest`
+# ===================
+#
+# Acts as a 'view' on a `Manifest`. Will further parse the object into expected values, specify defaults, etc.
+#
+
+module "manifest" {
+  source = "../manifest"
+
+  path = var.manifest_path
+}
+
 locals {
   defaults = {
     deployment = {
@@ -6,9 +19,10 @@ locals {
         custom  = {}
         named   = []
         managed = []
+        service = []
       }
     }
+    secrets = []
   }
-  manifest = yamldecode(file(var.manifest_path))
-  values   = merge(local.defaults, local.manifest)
+  object = merge(local.defaults, module.manifest.object)
 }

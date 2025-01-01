@@ -1,4 +1,11 @@
 
+# 
+# `Manifest`
+# ==========
+#
+# Given a file path (relative to root module), reads the file as a yaml / json file and makes the resulting object available as output.
+#
+
 locals {
   manifest_contents = file(var.path)
   is_yaml           = endswith(var.path, ".yaml") || endswith(var.path, ".yml")

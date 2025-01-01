@@ -20,7 +20,7 @@ run "ok_manifest_yaml" {
   }
 
   assert { 
-    condition = output.parsed == {
+    condition = output.object == {
       manifest: "ok"
     }
     error_message = "Manifest did not match expectations"
@@ -35,7 +35,7 @@ run "ok_manifest_yml" {
   }
 
   assert { 
-    condition = output.parsed == {
+    condition = output.object == {
       manifest: "ok"
     }
     error_message = "Manifest did not match expectations"
@@ -50,7 +50,7 @@ run "ok_manifest_json" {
   }
 
   assert { 
-    condition = output.parsed == {
+    condition = output.object == {
       manifest: "ok"
     }
     error_message = "Manifest did not match expectations"

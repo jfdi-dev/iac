@@ -28,7 +28,7 @@ module "project-context" {
 }
 
 locals {
-  config = merge(module.project-context.value, module.manifest.value)
+  config = merge(module.project-context.value, module.manifest.object)
   fqdn   = "${local.config.artifact}.${module.project-context.env}.${local.config.tldp1}"
 }
 

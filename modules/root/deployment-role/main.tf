@@ -19,11 +19,11 @@ module "manifest" {
 }
 
 locals {
-  secret_policies = contains(keys(module.manifest.value), "secrets") ? [
-    for secret in module.manifest.value.secrets :
+  secret_policies = [
+    for secret in module.manifest.secrets :
     "read-context-secret-${secret}"
-  ] : []
-  policies = merge(module.manifest.value.deployment.policies, {
+  ]
+  policies = merge(module.manifest.deployment.policies, {
     named : local.secret_policies
   })
 }
@@ -34,6 +34,6 @@ module "deployer-role" {
   project         = module.project-context.value.project
   tooling_account = module.project-context.value.accounts.tooling
 
-  artifact_name = module.manifest.value.artifact
+  artifact_name = module.manifest.artifact
   policies      = local.policies
 }
