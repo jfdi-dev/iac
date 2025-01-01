@@ -1,3 +1,16 @@
+mock_provider "aws" {
+  mock_data "aws_iam_policy_document" {
+    defaults = {
+      json = "{}"
+    }
+  }
+  mock_resource "aws_iam_role" {
+    defaults = {
+      arn = "arn:aws:iam:eu-west-2::role/my-role"
+    }
+  }
+}
+
 variables {
   name = "my-lambda"
 }
