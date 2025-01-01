@@ -36,7 +36,7 @@ run "service_only_will_find_account_and_region" {
   }
 
   assert {
-    condition = "arn:aws:iam:eu-west-2:012345678901:*" == output.value
+    condition = "arn:aws:iam:eu-west-2:012345678901:*" == output.arn
     error_message = "Arn value did not match expectations"
   }
 }
@@ -50,7 +50,7 @@ run "overriding_account_and_region_will_use_empty_values" {
   }
 
   assert {
-    condition = "arn:aws:iam:::*" == output.value
+    condition = "arn:aws:iam:::*" == output.arn
     error_message = "Arn value did not match expectations"
   }
 }
@@ -64,7 +64,7 @@ run "overriding_resource_type_will_include_resource_id" {
   }
 
    assert {
-    condition = "arn:aws:iam:eu-west-2:012345678901:roles/my_role" == output.value
+    condition = "arn:aws:iam:eu-west-2:012345678901:roles/my_role" == output.arn
     error_message = "Arn value did not match expectations"
   }
 }

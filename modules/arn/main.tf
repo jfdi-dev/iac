@@ -20,6 +20,6 @@ locals {
 
   resource = var.resource_type != "*" ? "${var.resource_type}/${var.resource_id}" : var.resource_type
 
-  value = "arn:${local.partition}:${local.service}:${local.region}:${local.account}:${local.resource}"
+  arn = "arn:${local.partition}:${local.service}:${local.region}:${local.account}:${local.resource}"
 }
 
