@@ -2,10 +2,10 @@
 variable "env" {
   type     = string
   nullable = false
-  default  = "dev"
+  default  = "development"
 
   validation {
-    condition     = contains(["dev", "test", "prod"], var.env)
-    error_message = "Input `env` must be one of `dev`, `test`, or `prod`"
+    condition     = contains(["development", "dev", "test", "staging", "production", "prod"], var.env)
+    error_message = "Input `env` must be one of `dev`, `development`, `test`, `staging`, `production`, or `prod`"
   }
 }
