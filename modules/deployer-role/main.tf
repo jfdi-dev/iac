@@ -26,10 +26,10 @@ resource "aws_iam_role" "deployment-role" {
   assume_role_policy = local.assume-role-policy
 }
 
-module "identity_policies" {
-  source = "../identity-policies"
+module "role_policies" {
+  source = "../../role-policies"
 
-  identity = aws_iam_role.deployment-role.name
+  role = aws_iam_role.deployment-role.name
 
   policies = {
     custom  = local.policies.custom

@@ -1,5 +1,5 @@
 
-variable "identity" {
+variable "role" {
   type = string
 }
 
@@ -24,11 +24,6 @@ variable "policies" {
     custom  = {}
     named   = []
     managed = []
+    service = []
   }
-}
-
-variable "account" {
-  type     = string
-  nullable = true
-  default  = null
 }

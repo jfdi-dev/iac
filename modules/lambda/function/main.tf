@@ -21,17 +21,16 @@ locals {
   }
 }
 
-module "identity_policies" {
-  source = "../../identity-policies"
+module "role_policies" {
+  source = "../../role-policies"
 
-  identity = aws_iam_role.lambda_role.name
+  role = aws_iam_role.lambda_role.name
 
   policies = merge(local.policies,
     {
       service = ["AWSLambdaBasicExecutionRole"]
   })
 }
-
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
