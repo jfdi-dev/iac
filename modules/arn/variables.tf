@@ -9,7 +9,7 @@ variable "service" {
   nullable = false
 
   validation {
-    condition = var.service != ""
+    condition     = var.service != ""
     error_message = "Service cannot be null or empty"
   }
 }
