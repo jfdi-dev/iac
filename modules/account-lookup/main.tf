@@ -1,24 +1,50 @@
 
-# Test
+#
+# `Account Lookup`
+# ================
+# 
+# Outputs all well-known accounts, eg: security, networking, tooling, etc.
+#
+# Requires permission to read the AWS Organization's Non-master Accounts, which is provided by the `Org` module, deployed manually as part of Foundations.
+#
+# Will look for accounts that contain markers in their name, eg: 'security' / 'tooling' / 'networking' / etc.
+#
+
 data "aws_organizations_organization" "org" {
+
 }
 
 locals {
-  accounts = data.aws_organizations_organization.org.non_master_accounts
-  accounts_by_name = tomap({
-    for account in local.accounts :
-    account.name => account
-  })
+  non_master_accounts = data.aws_organizations_organization.org.non_master_accounts
+  
+  # This should come from `org`?
+  account_markers = [
+    "security",
+    "networking",
+    "tooling",
+    "development",
+    "staging",
+    "production"
+  ]
 
-  security_account = contains(keys(local.accounts_by_name), "security") ? local.accounts_by_name["security"] : local.accounts_by_name["${var.project}-svc-security"]
+  marker_accounts = {
+    for marker in local.account_markers:
+    marker => [ 
+      for nma in local.non_master_accounts: 
+      nma 
+      if strcontains(nma.name, marker) 
+    ]
+  }
 
-  networking_account = contains(keys(local.accounts_by_name), "networking") ? local.accounts_by_name["networking"] : local.accounts_by_name["${var.project}-svc-networking"]
+  accounts = {
+    for marker, accounts in local.marker_accounts:
+    marker => length(accounts) <= 1 ? one(accounts) : null
+  }
+}
 
-  tooling_account = contains(keys(local.accounts_by_name), "tooling") ? local.accounts_by_name["tooling"] : local.accounts_by_name["${var.project}-svc-tooling"]
-
-  dev_account = contains(keys(local.accounts_by_name), "development") ? local.accounts_by_name["development"] : local.accounts_by_name["${var.project}-ops-development"]
-
-  test_account = contains(keys(local.accounts_by_name), "testing") ? local.accounts_by_name["staging"] : local.accounts_by_name["${var.project}-ops-staging"]
-
-  prod_account = contains(keys(local.accounts_by_name), "production") ? local.accounts_by_name["testing"] : local.accounts_by_name["${var.project}-ops-production"]
+check "exactly_one_account_for_every_marker" {
+  assert {
+    condition = alltrue([ for marker, accounts in local.accounts: contains(local.account_markers, marker) && accounts != null ])
+    error_message = "'Account not found' or 'too many accounts found' for marker"
+  }
 }
