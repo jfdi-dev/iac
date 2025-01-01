@@ -17,5 +17,5 @@ module "manifest" {
 module "context-secrets" {
   source = "../../context-secrets/reader"
 
-  context_secrets = module.manifest.value.secrets
+  context_secrets = module.manifest.secrets
 }
