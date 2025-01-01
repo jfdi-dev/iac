@@ -7,6 +7,11 @@ variable "partition" {
 variable "service" {
   type     = string
   nullable = false
+
+  validation {
+    condition = var.service != ""
+    error_message = "Service cannot be null or empty"
+  }
 }
 
 variable "region" {
