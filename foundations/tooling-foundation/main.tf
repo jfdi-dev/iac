@@ -9,11 +9,11 @@ module "accounts" {
 
 locals {
   tooling_account    = data.aws_caller_identity.current.account_id
-  security_account   = module.accounts.security
-  networking_account = module.accounts.networking
-  dev_account        = module.accounts.development
-  test_account       = module.accounts.staging
-  prod_account       = module.accounts.production
+  security_account   = module.accounts.security.id
+  networking_account = module.accounts.networking.id
+  dev_account        = module.accounts.development.id
+  test_account       = module.accounts.staging.id
+  prod_account       = module.accounts.production.id
   primary_region     = data.aws_region.region.name
   secondary_region   = var.secondary_region
 }
