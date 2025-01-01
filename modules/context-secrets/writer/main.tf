@@ -4,11 +4,11 @@ locals {
   context              = yamldecode(file(local.context_secrets_file))
 }
 
-module secret {
+module "secret" {
   source = "../../secret/local"
 
   for_each = local.context
 
-  name = "context-secret-${each.key}"
+  name  = "context-secret-${each.key}"
   value = jsonencode(each.value)
 }

@@ -1,5 +1,5 @@
 
 output "secrets" {
-  value = module.secret
+  value       = module.secret
   description = "All of the created secrets"
 }
