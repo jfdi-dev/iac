@@ -59,32 +59,32 @@ run "accounts_are_found_with_partial_match" {
   }
 
   assert {
-    condition = provider::assert::not_empty(output.security_account)
+    condition = provider::assert::not_null(output.security)
     error_message = "Security Account was not found."
   }
 
   assert {
-    condition = provider::assert::not_empty(output.tooling_account)
+    condition = provider::assert::not_null(output.tooling)
     error_message = "Tooling Account was not found."
   }
 
   assert {
-    condition = provider::assert::not_empty(output.networking_account)
+    condition = provider::assert::not_null(output.networking)
     error_message = "Networking Account was not found."
   }
 
   assert {
-    condition = provider::assert::not_empty(output.development_account)
+    condition = provider::assert::not_null(output.development)
     error_message = "Development Account was not found."
   }
 
   assert {
-    condition = provider::assert::not_empty(output.staging_account)
+    condition = provider::assert::not_null(output.staging)
     error_message = "Staging Account was not found."
   }
 
   assert {
-    condition = provider::assert::not_empty(output.production_account)
+    condition = provider::assert::not_null(output.production)
     error_message = "Production Account was not found."
   }
 }

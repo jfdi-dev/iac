@@ -19,11 +19,11 @@ run "errors_when_accounts_not_found" {
 
   expect_failures = [ 
     check.exactly_one_account_for_every_marker,
-    output.tooling_account,
-    output.networking_account,
-    output.security_account,
-    output.development_account,
-    output.staging_account,
-    output.production_account
+    output.tooling,
+    output.networking,
+    output.security,
+    output.development,
+    output.staging,
+    output.production
   ]
 }

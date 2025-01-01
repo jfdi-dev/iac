@@ -3,8 +3,8 @@ output "accounts" {
   value = local.accounts
 }
 
-output "tooling_account" {
-  value = local.accounts["tooling"].id
+output "tooling" {
+  value = local.accounts["tooling"]
 
   precondition {
     condition = contains(keys(local.accounts), "tooling") && local.accounts["tooling"] != null
@@ -12,8 +12,8 @@ output "tooling_account" {
   }
 }
 
-output "networking_account" {
-  value = local.accounts["networking"].id
+output "networking" {
+  value = local.accounts["networking"]
 
   precondition {
     condition = contains(keys(local.accounts), "networking") && local.accounts["networking"] != null
@@ -21,8 +21,8 @@ output "networking_account" {
   }
 }
 
-output "security_account" {
-  value = local.accounts["security"].id
+output "security" {
+  value = local.accounts["security"]
   
   precondition {
     condition = contains(keys(local.accounts), "security") && local.accounts["security"] != null
@@ -30,8 +30,8 @@ output "security_account" {
   }
 }
 
-output "development_account" {
-  value = local.accounts["development"].id
+output "development" {
+  value = local.accounts["development"]
 
   precondition {
     condition = contains(keys(local.accounts), "development") && local.accounts["development"] != null
@@ -39,8 +39,8 @@ output "development_account" {
   }
 }
 
-output "staging_account" {
-  value = local.accounts["staging"].id
+output "staging" {
+  value = local.accounts["staging"]
 
   precondition {
     condition = contains(keys(local.accounts), "staging") && local.accounts["staging"] != null
@@ -48,8 +48,8 @@ output "staging_account" {
   }
 }
 
-output "production_account" {
-  value = local.accounts["production"].id
+output "production" {
+  value = local.accounts["production"]
 
   precondition {
     condition = contains(keys(local.accounts), "production") && local.accounts["production"] != null

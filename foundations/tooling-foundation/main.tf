@@ -5,17 +5,15 @@ data "aws_region" "region" {}
 
 module "accounts" {
   source = "../../modules/account-lookup"
-
-  project = var.project
 }
 
 locals {
   tooling_account    = data.aws_caller_identity.current.account_id
-  security_account   = module.accounts.security_account
-  networking_account = module.accounts.networking_account
-  dev_account        = module.accounts.dev_account
-  test_account       = module.accounts.test_account
-  prod_account       = module.accounts.prod_account
+  security_account   = module.accounts.security
+  networking_account = module.accounts.networking
+  dev_account        = module.accounts.development
+  test_account       = module.accounts.staging
+  prod_account       = module.accounts.production
   primary_region     = data.aws_region.region.name
   secondary_region   = var.secondary_region
 }
