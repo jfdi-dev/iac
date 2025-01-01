@@ -1,4 +1,14 @@
 
+#
+# `ARN`
+# =====
+#
+# Given some constituent parts of an ARN, returns a full-formed ARN value.
+#
+# Behaviour varies depending on the values of variables (eg: region/account as null = use ambient region/account id, vs region/account as "" = use blanks in the ARN) 
+#
+
+
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
