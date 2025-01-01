@@ -25,6 +25,6 @@ output "read_policy" {
 }
 
 output "write_policy" {
-  value = aws_iam_policy.write_secret
+  value       = aws_iam_policy.write_secret
   description = "The write secret policy resource"
 }
