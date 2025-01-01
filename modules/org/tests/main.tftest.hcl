@@ -1,5 +1,16 @@
-provider aws {
-  region = "eu-west-2"
+mock_provider "aws" {
+  mock_data "aws_organizations_organization" {
+     defaults = {
+       roots = [
+        {
+          arn = "12345"
+          name = "my_account"
+          # This needs to match the regex on here: https://docs.aws.amazon.com/organizations/latest/APIReference/API_CreateOrganizationalUnit.html#organizations-CreateOrganizationalUnit-request-ParentId
+          id = "r-12345|ou-a9c3-aae3r4ff9r"
+        }
+       ]
+     }
+  }
 }
 
 variables {
