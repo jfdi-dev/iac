@@ -34,7 +34,7 @@ locals {
 module "parameter" {
   source = "../../parameter/writer"
 
-  name = module.project-context.parameter_name
+  name  = module.project-context.parameter_name
   value = jsonencode(local.value)
 
   shared_with = values(local.accounts)
