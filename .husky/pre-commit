@@ -1,2 +1,12 @@
-MODULE_DIRS=$(echo '[' $(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq | sed -e 's/^\|$/"/g' | paste -d, -s -) ']' | jq -c)
+MODULE_DIRS=$(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq | sed -e 's/^\|$/"/g' | paste -d, -s -)
 echo $MODULE_DIRS
+echo "hi"
+
+for item in $MODULE_DIRS; do 
+  cwd=$(pwd)
+  cd $item; 
+  terraform fmt
+  terraform init -backend=false -input=false
+  terraform test
+  cd $cwd
+done
