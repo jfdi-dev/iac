@@ -4,7 +4,11 @@ echo "hi"
 
 cwd=$(pwd)
 
+module_count=0
+tested_modules=0
+
 for item in $MODULE_DIRS; do 
+  ((module_count+=1))
   echo "> cd $item"
   cd $item;
   echo "> terraform fmt"
@@ -20,8 +24,11 @@ for item in $MODULE_DIRS; do
   then
     echo "> terraform test"
     terraform test
+    ((tested_modules+=1))
   fi
   cd $cwd
+  echo "Modules: $module_count"  
+  echo "Tested: $tested_modules"
 done
 
 git update-index --again
