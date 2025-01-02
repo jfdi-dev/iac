@@ -19,7 +19,6 @@ module "dns-delegate" {
   count = var.subdomain == null ? 0 : 1
 
   subdomain          = "${var.subdomain}.${module.project-context.value.tldp1}"
-  networking_account = module.project-context.value.accounts.networking
 }
 
 module "context-secrets" {
