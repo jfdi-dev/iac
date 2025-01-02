@@ -8,10 +8,3 @@ variable "name" {
     error_message = "Input `name` is required"
   }
 }
-
-variable "dr" {
-  type = object({
-    is_at_least_silver = bool
-  })
-  nullable = false
-}

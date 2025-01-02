@@ -3,6 +3,16 @@ locals {
   logs_bucket = "logs.${var.name}"
 }
 
+# module "dr-from-env" {
+#   source = "../dr-from-env"
+# }
+
+# module "dr" {
+#   source = "../disaster-recovery"
+
+#   level = module.dr-from-env.level
+# }
+
 resource "aws_s3_bucket" "logs" {
   bucket = local.logs_bucket
 }

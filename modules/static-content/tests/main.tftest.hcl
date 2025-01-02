@@ -1,3 +1,7 @@
+mock_provider "aws" {
+  
+}
+
 run "outputs_are_set" {
   command = apply
 
