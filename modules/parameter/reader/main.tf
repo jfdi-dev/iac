@@ -3,11 +3,11 @@ data "aws_ram_resource_share" "resource_share" {
   resource_owner = var.local ? "SELF" : "OTHER-ACCOUNTS"
 
   name = var.name
-  
+
   dynamic "filter" {
     for_each = var.tags
     content {
-      name = filter.key
+      name   = filter.key
       values = filter.value
     }
   }
@@ -19,8 +19,8 @@ data "aws_ssm_parameter" "subdomain" {
 }
 
 locals {
-  parameters = { 
-    for key, value in data.aws_ssm_parameter.subdomain:
+  parameters = {
+    for key, value in data.aws_ssm_parameter.subdomain :
     value.name => value.value
   }
 }
