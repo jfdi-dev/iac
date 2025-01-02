@@ -9,7 +9,7 @@ module "project-context-name" {
   source = "../project-context"
 }
 
-module "local_resource_share_arn" {
+module "local_resource_share" {
   source = "../arn"
 
   service       = "ram"
@@ -17,7 +17,7 @@ module "local_resource_share_arn" {
   resource_id   = "*"
 }
 
-module "tooling_resource_share_arn" {
+module "tooling_resource_share" {
   source = "../arn"
 
   account       = var.tooling_account
@@ -26,7 +26,7 @@ module "tooling_resource_share_arn" {
   resource_id   = "*"
 }
 
-module "project_context_parameter_arn" {
+module "project_context_parameter" {
   source = "../arn"
 
   account       = var.tooling_account
@@ -60,17 +60,17 @@ module "deployer-role" {
         {
           effect    = "Allow"
           actions   = ["ram:GetResourceShares"]
-          resources = [module.local_resource_share_arn.value]
+          resources = [module.local_resource_share.arn]
         },
         {
           effect    = "Allow"
           actions   = ["ram:ListResources"]
-          resources = [module.tooling_resource_share_arn.value]
+          resources = [module.tooling_resource_share.arn]
         },
         {
           effect    = "Allow"
           actions   = ["ssm:GetParameter"]
-          resources = [module.project_context_parameter_arn.value]
+          resources = [module.project_context_parameter.arn]
         }
       ]
     }
