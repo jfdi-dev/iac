@@ -47,7 +47,6 @@ module "statics" {
   for_each = var.statics
 
   name = each.key
-  dr   = module.dr
 }
 
 locals {
