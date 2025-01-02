@@ -1,11 +1,3 @@
-provider "aws" {
-
-}
-
-provider "aws" {
-  alias  = "tls"
-  region = "us-east-1"
-}
 
 locals {
   has_static = length(var.static) > 0
