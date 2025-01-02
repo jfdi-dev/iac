@@ -1,8 +1,8 @@
 
 resource "aws_ssm_parameter" "param" {
-  tier = "Advanced"
-  name = var.name
-  type = "String"
+  tier  = "Advanced"
+  name  = var.name
+  type  = "String"
   value = var.value
 }
 
@@ -19,7 +19,7 @@ resource "aws_ram_resource_association" "param_share" {
 }
 
 resource "aws_ram_principal_association" "param_share" {
-  for_each = var.shared_with
+  for_each           = var.shared_with
   resource_share_arn = aws_ram_resource_share.param_share.arn
   principal          = each.value
 }
