@@ -1,6 +1,38 @@
-mock_provider "aws" {}
+mock_provider "aws" {
+  mock_data "aws_iam_policy_document" {
+    defaults = {
+      json = "{}"
+    }
+  }
+  mock_data "aws_api_gateway_authorizers" {
+    defaults = {
+      ids = ["12345"]
+    }
+  }
+  mock_resource "aws_iam_role" {
+    defaults = {
+      arn = "arn:aws:iam:eu-west-2:123456789012:role/my-role"
+    }
+  }
+  mock_resource "aws_api_gateway_rest_api" {
+    defaults = {
+      execution_arn = "arn:aws:apigateway:eu-west-2:123456789012:api"
+    }
+  }
+}
 mock_provider "aws" {
   alias = "tls"
+}
+
+override_module {
+  target = module.jwt-auth
+  outputs = {
+    function = {
+      invoke_arn = "arn:aws:lambda:eu-west-2:123456789012:function/my-func"
+      function_name = "my-func"
+    }
+  }
+
 }
 
 run "outputs-are-set" {

@@ -11,17 +11,17 @@
 locals {
   policies = {
     custom  = coalesce(var.policies.custom, {})
-    named   = coalesce(var.policies.named, [])
-    managed = coalesce(var.policies.managed, [])
-    service = coalesce(var.policies.service, [])
+    named   = tolist(coalesce(var.policies.named, []))
+    managed = tolist(coalesce(var.policies.managed, []))
+    service = tolist(coalesce(var.policies.service, []))
   }
 
-  service_resource_ids = [for service in local.policies.service : "service-role/${service}"]
+  service_resource_ids = tolist([for service in local.policies.service : "service-role/${service}"])
 }
 
 module "policy_arns" {
   source   = "../arn"
-  for_each = concat(local.policies.managed, local.service_resource_ids, local.policies.named)
+  for_each = toset(concat(local.policies.managed, local.service_resource_ids, local.policies.named))
 
   service       = "iam"
   account       = "aws"
