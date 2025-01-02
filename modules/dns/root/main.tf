@@ -11,7 +11,7 @@ module "parameter" {
   source = "../../parameter/reader"
 
   tags = {
-    context = "subdomains"
+    context = ["subdomains"]
   }
 }
 
