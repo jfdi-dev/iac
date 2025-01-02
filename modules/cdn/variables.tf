@@ -9,22 +9,6 @@ variable "fqdn" {
   }
 }
 
-# variable "protected" {
-#   type = bool
-#   default = true
-#   nullable = false
-# }
-
-# variable "static" {
-#   type = list(object({
-#     fqdn = string
-#     bucket_name = string
-#     path = optional(string, null)
-#   }))
-#   default = []
-#   nullable = true
-# }
-
 variable "static" {
   type = map(object({
     fqdn        = string
@@ -34,37 +18,6 @@ variable "static" {
   default  = {}
   nullable = true
 }
-
-# variable "api" {
-#   type = list(object({
-#     fqdn = string
-#     path = optional(string, null)
-#   }))
-#   default = []
-#   nullable = true
-
-#   validation {
-#     condition = length(concat(var.api, var.static)) > 0
-#     error_message = "At least one `static` or one `api` must be specified."
-#   }
-
-#   validation {
-#     condition = length([
-#       for o in concat(var.api, var.static): o 
-#       if o.path == null 
-#     ]) <= 1
-#     # condition = length(var.api) <= 1 || length(
-#     #   [ 
-#     #     for api in var.api: api.path 
-#     #   ]) == length(distinct(compact([ for api in var.api: api.path ])))
-#     error_message = "Only one `static` or `api` can be default (ie: no `path`)."
-#   }
-
-#   validation {
-#     condition = length(concat(var.api, var.static)) - length(distinct([ for o in concat(var.api, var.static): o.path ])) <= 1
-#     error_message = "All paths must be unique."
-#   }
-# }
 
 variable "api" {
   type = map(object({
@@ -81,18 +34,14 @@ variable "api" {
 
   validation {
     condition = length([
-      for o in concat(keys(var.api), keys(var.static)) : o
+      for o in concat(values(var.api), values(var.static)) : o
       if o.path == null
     ]) <= 1
-    # condition = length(var.api) <= 1 || length(
-    #   [ 
-    #     for api in var.api: api.path 
-    #   ]) == length(distinct(compact([ for api in var.api: api.path ])))
     error_message = "Only one `static` or `api` can be default (ie: has no `path`)."
   }
 
   validation {
-    condition     = length(concat(keys(var.api), keys(var.static))) - length(distinct([for o in concat(keys(var.api), keys(var.static)) : o.path])) <= 1
+    condition     = length(concat(keys(var.api), keys(var.static))) - length(distinct([for o in concat(values(var.api), values(var.static)) : o.path])) == 0
     error_message = "All paths must be unique."
   }
 }

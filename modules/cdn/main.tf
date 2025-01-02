@@ -1,18 +1,27 @@
+provider "aws" {
+
+}
+
+provider "aws" {
+  alias  = "tls"
+  region = "us-east-1"
+}
+
 locals {
   has_static = length(var.static) > 0
   has_api    = length(var.api) > 0
 
   statics = { for k, s in var.static : k => merge(s, { type = "static" }) }
   apis    = { for k, a in var.api : k => merge(a, { type = "api" }) }
-  origins = concat(local.statics, local.apis)
+  origins = merge(local.statics, local.apis)
 
-  non_prefixed_origin = [
-    for o in local.origins : o if o.path == null
-  ]
-
+  # Default origin is the only one with a path.
+  # If all of them have a path, select the 'first' one.
   default_origin = coalesce(
-    length(local.non_prefixed_origin) > 0 ? local.non_prefixed_origin[0] : null,
-    length(local.origins) > 0 ? local.origins[0] : null
+    one([
+      for o in local.origins : o if o.path == null
+    ]),
+    element(values(local.origins), 0)
   )
 
   domain_parts             = split(".", var.fqdn)
@@ -45,29 +54,26 @@ data "aws_route53_zone" "zone" {
   private_zone = false
 }
 
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.tls_cert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+locals {
+  dvo = tolist(aws_acm_certificate.tls_cert.domain_validation_options)[0]
+}
 
+resource "aws_route53_record" "cert_validation" {
   allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
+  name            = local.dvo.resource_record_name
+  records         = [local.dvo.resource_record_value]
   ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.zone.id
+  type            = local.dvo.resource_record_type
+  zone_id         = data.aws_route53_zone.zone.zone_id
 }
 
 resource "aws_acm_certificate_validation" "tls_cert" {
   provider                = aws.tls
   certificate_arn         = aws_acm_certificate.tls_cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
 }
 
+# does this need the `tls` provider?
 # data "aws_cloudfront_cache_policy" "caching_optimized" {
 #   name = "Managed-CachingOptimized"
 # }
