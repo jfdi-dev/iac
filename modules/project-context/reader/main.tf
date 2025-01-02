@@ -3,19 +3,18 @@ module "project-context" {
   source = "../"
 }
 
-data "aws_ram_resource_share" "project_context" {
-  name           = module.project-context.parameter_name
-  resource_owner = var.is_tooling ? "SELF" : "OTHER-ACCOUNTS"
-}
+module "parameter" {
+  source = "../../parameter/reader"
 
-data "aws_ssm_parameter" "project_context" {
-  name = data.aws_ram_resource_share.project_context.resource_arns[0]
+  name = module.project-context.parameter_name
+
+  local = var.is_tooling
 }
 
 data "aws_caller_identity" "current" {}
 
 locals {
-  project_context = jsondecode(data.aws_ssm_parameter.project_context.insecure_value)
+  project_context = jsondecode(module.parameter.value[module.project-context.parameter_name])
   matching_envs = [
     for env, id in local.project_context.accounts :
     env

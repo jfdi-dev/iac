@@ -3,6 +3,10 @@ data "aws_organizations_organization" "org" {}
 
 data "aws_caller_identity" "current" {}
 
+module "project-context" {
+  source = "../"
+}
+
 locals {
   accounts = {
     for account in data.aws_organizations_organization.org.non_master_accounts :
@@ -10,13 +14,8 @@ locals {
     if account.id != data.aws_caller_identity.current.account_id
     # Must omit current account as cannot create a share to account which owns ssm parameter
   }
-}
 
-resource "aws_ssm_parameter" "project_context" {
-  tier = "Advanced"
-  name = "project_context"
-  type = "String"
-  value = jsonencode({
+  value = {
     project = var.project
     accounts = {
       tooling    = var.tooling_account
@@ -29,22 +28,14 @@ resource "aws_ssm_parameter" "project_context" {
     regions   = var.regions
     tldp1     = var.tldp1
     terraform = var.terraform
-  })
+  }
 }
 
-resource "aws_ram_resource_share" "project_context" {
-  name                      = "project_context"
-  allow_external_principals = false
-}
+module "parameter" {
+  source = "../../parameter/writer"
 
-resource "aws_ram_resource_association" "project_context" {
-  resource_arn       = aws_ssm_parameter.project_context.arn
-  resource_share_arn = aws_ram_resource_share.project_context.arn
-}
+  name = module.project-context.parameter_name
+  value = jsonencode(local.value)
 
-resource "aws_ram_principal_association" "project_context" {
-  for_each = local.accounts
-
-  resource_share_arn = aws_ram_resource_share.project_context.arn
-  principal          = each.value
+  shared_with = values(local.accounts)
 }

@@ -7,22 +7,20 @@ resource "aws_route53_zone" "root" {
   }
 }
 
-data "aws_ram_resource_share" "resource_share" {
-  resource_owner = "OTHER-ACCOUNTS"
-  name           = "subdomain_delegate"
-}
+module "parameter" {
+  source = "../../parameter/reader"
 
-data "aws_ssm_parameter" "subdomain" {
-  for_each = toset(data.aws_ram_resource_share.resource_share.resource_arns)
-  name     = each.key
+  tags = {
+    context = "subdomains"
+  }
 }
 
 resource "aws_route53_record" "subdomain_delegate" {
-  for_each = data.aws_ssm_parameter.subdomain
+  for_each = module.parameter.value
 
   zone_id = aws_route53_zone.root.zone_id
-  name    = jsondecode(each.value.value).subdomain
+  name    = jsondecode(each.value).subdomain
   type    = "NS"
   ttl     = var.ttl
-  records = jsondecode(each.value.value).nameservers
+  records = jsondecode(each.value).nameservers
 }
