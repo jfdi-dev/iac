@@ -1,4 +1,4 @@
-module project-context {
+module "project-context" {
   source = "../../project-context/reader"
 }
 
