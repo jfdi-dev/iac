@@ -18,7 +18,7 @@ module "dns-delegate" {
 
   count = var.subdomain == null ? 0 : 1
 
-  subdomain          = "${var.subdomain}.${module.project-context.value.tldp1}"
+  subdomain = "${var.subdomain}.${module.project-context.value.tldp1}"
 }
 
 module "context-secrets" {
