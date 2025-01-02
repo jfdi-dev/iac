@@ -1,1 +1,2 @@
-npm test
+MODULE_DIRS=$(echo '[' $(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq | sed -e 's/^\|$/"/g' | paste -d, -s -) ']' | jq -c)
+echo $MODULE_DIRS
