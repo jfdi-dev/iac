@@ -1,0 +1,27 @@
+{
+  "name": "iac",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/jfdi-dev/iac#readme",
+  "bugs": {
+    "url": "https://github.com/jfdi-dev/iac/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfdi-dev/iac.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
