@@ -32,23 +32,10 @@ locals {
   fqdn   = "${local.config.artifact}.${module.project-context.env}.${local.config.tldp1}"
 }
 
-module "dr-from-env" {
-  source = "../../dr-from-env"
-
-  env = module.project-context.env
-}
-
-module "dr" {
-  source = "../../disaster-recovery"
-
-  level = module.dr-from-env.level
-}
-
 module "static" {
   source = "../../static-content"
 
   name = local.fqdn
-  dr   = module.dr
 }
 
 module "cdn" {
