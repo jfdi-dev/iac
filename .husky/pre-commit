@@ -1,12 +1,27 @@
-MODULE_DIRS=$(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq | sed -e 's/^\|$/"/g' | paste -d, -s -)
+MODULE_DIRS=$(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq )
 echo $MODULE_DIRS
 echo "hi"
 
+cwd=$(pwd)
+
 for item in $MODULE_DIRS; do 
-  cwd=$(pwd)
-  cd $item; 
+  echo "> cd $item"
+  cd $item;
+  echo "> terraform fmt"
   terraform fmt
+  echo "> terraform init"
   terraform init -backend=false -input=false
-  terraform test
+  if [ -e ./validate ]
+  then
+    echo "> terraform validate"
+    terraform validate
+  fi
+  if [ -e ./tests ]
+  then
+    echo "> terraform test"
+    terraform test
+  fi
   cd $cwd
 done
+
+git update-index --again
