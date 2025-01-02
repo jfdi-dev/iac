@@ -27,7 +27,7 @@ resource "aws_iam_role" "deployment-role" {
 }
 
 module "role_policies" {
-  source = "../../role-policies"
+  source = "../role-policies"
 
   role = aws_iam_role.deployment-role.name
 
