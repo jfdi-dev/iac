@@ -19,10 +19,20 @@ locals {
   service_resource_ids = tolist([for service in local.policies.service : "service-role/${service}"])
 }
 
-module "policy_arns" {
+module "named_policy_arns" {
   source   = "../arn"
-  for_each = toset(concat(local.policies.managed, local.service_resource_ids, local.policies.named))
+  for_each = toset(local.policies.named)
 
+  service       = "iam"
+  region        = ""
+  resource_type = "policy"
+  resource_id   = each.value
+}
+
+module "managed_policy_arns" {
+  source  = "../arn"
+  for_each = toset(concat(local.policies.managed, local.service_resource_ids))
+  
   service       = "iam"
   account       = "aws"
   region        = ""
@@ -56,9 +66,15 @@ resource "aws_iam_role_policy_attachment" "custom_policy_attachments" {
   policy_arn = each.value.arn
 }
 
+resource "aws_iam_role_policy_attachment" "named_policy_attachments" {
+  for_each = module.named_policy_arns
 
-resource "aws_iam_role_policy_attachment" "policy_attachments" {
-  for_each = module.policy_arns
+  role       = var.role
+  policy_arn = each.value.arn
+}
+
+resource "aws_iam_role_policy_attachment" "managed_policy_attachments" {
+  for_each = module.managed_policy_arns
 
   role       = var.role
   policy_arn = each.value.arn

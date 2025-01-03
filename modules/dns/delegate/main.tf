@@ -9,7 +9,7 @@ resource "aws_route53_zone" "subdomain" {
 module "parameter" {
   source = "../../parameter/writer"
 
-  name = var.subdomain
+  name = "subdomain"
   value = jsonencode({
     subdomain   = var.subdomain
     nameservers = aws_route53_zone.subdomain.name_servers

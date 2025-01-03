@@ -10,9 +10,7 @@ resource "aws_route53_zone" "root" {
 module "parameter" {
   source = "../../parameter/reader"
 
-  tags = {
-    context = ["subdomains"]
-  }
+  name = "subdomain"
 }
 
 resource "aws_route53_record" "subdomain_delegate" {
