@@ -1,5 +1,4 @@
 
 output "value" {
-  value     = local.parameters
-  sensitive = true
+  value = local.parameters
 }

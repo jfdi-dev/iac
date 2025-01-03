@@ -21,6 +21,6 @@ data "aws_ssm_parameter" "subdomain" {
 locals {
   parameters = {
     for key, value in data.aws_ssm_parameter.subdomain :
-    value.name => value.value
+    value.name => value.insecure_value
   }
 }
