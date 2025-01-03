@@ -1,4 +1,4 @@
-MODULE_DIRS=$(find . -type f -name '*\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq )
+MODULE_DIRS=$(find . -type f -name '**\main.tf' | sed -r 's|/[^/]+$||' | sort | uniq )
 echo $MODULE_DIRS
 echo "hi"
 
@@ -27,8 +27,10 @@ for item in $MODULE_DIRS; do
     ((tested_modules+=1))
   fi
   cd $cwd
-  echo "Modules: $module_count"  
-  echo "Tested: $tested_modules"
 done
 
+echo "> git update-index --again"
 git update-index --again
+
+echo "Modules: $module_count"  
+echo "Tested: $tested_modules"
