@@ -2,7 +2,7 @@
 data "aws_ram_resource_share" "resource_share" {
   resource_owner = var.local ? "SELF" : "OTHER-ACCOUNTS"
 
-  name = var.name
+  name                  = var.name
   resource_share_status = "ACTIVE"
 
   dynamic "filter" {

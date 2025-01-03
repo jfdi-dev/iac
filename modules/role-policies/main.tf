@@ -30,9 +30,9 @@ module "named_policy_arns" {
 }
 
 module "managed_policy_arns" {
-  source  = "../arn"
+  source   = "../arn"
   for_each = toset(concat(local.policies.managed, local.service_resource_ids))
-  
+
   service       = "iam"
   account       = "aws"
   region        = ""

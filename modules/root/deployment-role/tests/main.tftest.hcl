@@ -3,6 +3,20 @@ mock_provider "aws" {
 }
 
 override_module {
+  target = module.deployer-role.module.role_policies.module.named_policy_arns
+  outputs = {
+    arn = "arn:aws:iam::123456789012:policy/read-context-secret"
+  }
+}
+
+override_module {
+  target = module.deployer-role.module.role_policies.module.managed_policy_arns
+  outputs = {
+    arn = "arn:aws:iam::123456789012:policy/read-context-secret"
+  }
+}
+
+override_module {
   target = module.project-context
   outputs = {
     value = {
