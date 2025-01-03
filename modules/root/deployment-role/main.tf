@@ -16,6 +16,8 @@ module "project-context" {
 
 module "manifest" {
   source = "../../artifact-manifest"
+
+  manifest_path = var.manifest
 }
 
 locals {

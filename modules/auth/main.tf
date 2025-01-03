@@ -337,6 +337,13 @@ resource "aws_route53_record" "auth_domain" {
   type    = upper(auth0_custom_domain.custom_domain[0].verification[0].methods[0].name)
   ttl     = var.dns.ttl
   records = [auth0_custom_domain.custom_domain[0].verification[0].methods[0].record]
+
+  lifecycle {
+    precondition {
+      condition     = length(auth0_custom_domain.custom_domain) > 0 && length(auth0_custom_domain.custom_domain[0].verification) > 0
+      error_message = "Resource `auth0_custom_domain.custom_domain did not match expected schema: (${jsonencode(auth0_custom_domain.custom_domain)})"
+    }
+  }
 }
 
 resource "auth0_custom_domain_verification" "custom_domain" {

@@ -18,6 +18,10 @@ provider "aws" {
   }
 }
 
+provider "auth0" {
+
+}
+
 module "manifest" {
   source = "../../artifact-manifest"
 
