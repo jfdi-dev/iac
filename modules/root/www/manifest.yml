@@ -22,6 +22,7 @@ deployment:
             - cloudfront:TagResource
             - cloudfront:ListTagsForResource
             - cloudfront:CreateFunction
+            - cloudfront:PublishFunction
           resources:
             - '*'
         - effect: Allow
