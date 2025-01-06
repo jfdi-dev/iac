@@ -20,7 +20,8 @@ deployment:
             - cloudfront:GetDistribution 
             - cloudfront:DeleteDistribution 
             - cloudfront:TagResource
-            - cloudfront:ListTagsForResource 
+            - cloudfront:ListTagsForResource
+            - cloudfront:CreateFunction
           resources:
             - '*'
         - effect: Allow

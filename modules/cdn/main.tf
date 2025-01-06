@@ -128,7 +128,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
 
     dynamic "function_association" {
-      for_each = { for k, static in local.statics: k => static if contains(keys(static), "url_rewriter_function_arn") }
+      for_each = { for k, static in local.statics : k => static if contains(keys(static), "url_rewriter_function_arn") }
       iterator = cloudfront_function
 
       content {
