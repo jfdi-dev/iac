@@ -127,6 +127,16 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     viewer_protocol_policy = "redirect-to-https"
 
+    dynamic "function_association" {
+      for_each = local.statics
+      iterator = cloudfront_function
+
+      content {
+        event_type = "viewer-request"
+        function_arn = cloudfront_function.value.url_rewriter_function_arn
+      }  
+    }
+
     dynamic "lambda_function_association" {
       for_each = var.auth_lambda_arns
       iterator = edge_function
