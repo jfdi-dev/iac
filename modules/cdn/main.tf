@@ -127,14 +127,9 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    dynamic "function_association" {
-      for_each = { for k, static in local.statics : k => static if contains(keys(static), "url_rewriter_function_arn") }
-      iterator = cloudfront_function
-
-      content {
-        event_type   = "viewer-request"
-        function_arn = cloudfront_function.value.url_rewriter_function_arn
-      }
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.url_rewriter.arn
     }
 
     dynamic "lambda_function_association" {
@@ -225,4 +220,11 @@ resource "aws_s3_bucket_policy" "content" {
   for_each = local.statics
   bucket   = each.value.bucket_name
   policy   = data.aws_iam_policy_document.bucket_policy[each.key].json
+}
+
+resource "aws_cloudfront_function" "url_rewriter" {
+  name    = "url-rewriter"
+  runtime = "cloudfront-js-2.0"
+  publish = true
+  code    = file("${path.module}/url-rewriter.js")
 }

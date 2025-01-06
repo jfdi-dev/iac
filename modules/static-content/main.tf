@@ -62,12 +62,6 @@ resource "aws_s3_bucket_public_access_block" "logging" {
   restrict_public_buckets = true
 }
 
-resource "aws_cloudfront_function" "url_rewriter" {
-  name    = "url-rewriter"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/url-rewriter.js")
-}
 
 #
 # TODO

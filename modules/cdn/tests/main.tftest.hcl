@@ -12,6 +12,12 @@ mock_provider "aws" {
       json = "{}"
     }
   }
+  override_resource {
+    target = aws_cloudfront_function.url_rewriter
+    values = {
+      arn = "arn:aws:cloudfront:::function/url-rewriter"
+    }
+  }
 }
 
 mock_provider "aws" {
@@ -368,3 +374,26 @@ run "multiple_static_with_default_mount_allowed" {
   }
 }
 
+#
+# URL Rewrite Function Tests
+#
+
+run "x" {
+  command = plan
+  
+  providers = {
+    aws = aws.main
+    aws.tls = aws.tls
+  }
+
+  variables {
+    fqdn = "test.com"
+    static = {
+      one = { 
+        fqdn = "www.test.com"
+        bucket_name = "www.test.com"
+      }
+    }
+  }
+
+}

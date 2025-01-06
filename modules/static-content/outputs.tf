@@ -26,7 +26,3 @@ output "logs_bucket_id" {
 output "logs_bucket_arn" {
   value = aws_s3_bucket.logs.arn
 }
-
-output "url_rewriter_function_arn" {
-  value = aws_cloudfront_function.url_rewriter.arn
-}
