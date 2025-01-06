@@ -24,6 +24,7 @@ deployment:
             - cloudfront:CreateFunction
             - cloudfront:PublishFunction
             - cloudfront:DescribeFunction
+            - cloudfront:GetFunction
           resources:
             - '*'
         - effect: Allow
