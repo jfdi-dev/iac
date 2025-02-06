@@ -31,7 +31,7 @@ variable "statics" {
 
 variable "apis" {
   type = map(object({
-    path   = string
+    path   = optional(string, null)
     src    = string
     spec   = string
     scopes = set(string)
