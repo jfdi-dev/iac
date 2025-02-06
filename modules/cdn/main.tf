@@ -7,7 +7,7 @@ locals {
   apis    = { for k, a in var.api : k => merge(a, { type = "api" }) }
   origins = merge(local.statics, local.apis)
 
-  # Default origin is the only one with a path.
+  # Default origin is the only one without a path.
   # If all of them have a path, select the 'first' one.
   default_origin = coalesce(
     one([

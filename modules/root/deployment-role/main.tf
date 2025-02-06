@@ -21,7 +21,7 @@ module "manifest" {
 locals {
   secret_policies = [
     for secret in module.manifest.secrets :
-    "read-context-secret-${secret}"
+    "read-secret-context-secret-${secret}"
   ]
   policies = merge(module.manifest.deployment.policies, {
     named : local.secret_policies
