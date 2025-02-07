@@ -155,7 +155,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" #data.
       # And this forwards all but host header to origin...
       origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
-      path_pattern             = "/api/${api.value.path != null ? "${api.value.path}" : ""}"
+      path_pattern             = "/api/${api.value.path != null ? "${api.value.path}" : "*"}"
       allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE", "POST"]
       cached_methods           = ["GET", "HEAD"]
       target_origin_id         = api.value.fqdn
