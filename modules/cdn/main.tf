@@ -10,9 +10,9 @@ locals {
   # Default origin is the only one without a path.
   # If all of them have a path, select the 'first' one.
   default_origin = coalesce(
-    one([
+    try(one([
       for o in local.origins : o if o.path == null
-    ]),
+    ]), null),
     element(values(local.origins), 0)
   )
 
