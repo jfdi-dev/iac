@@ -20,7 +20,7 @@ variable "env" {
 
 variable "statics" {
   type = map(object({
-    path       = string
+    path       = optional(string, null)
     src        = string
     scopes     = set(string)
     short_name = string
