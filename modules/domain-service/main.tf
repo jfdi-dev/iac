@@ -101,7 +101,7 @@ module "cdn" {
   source = "../cdn"
 
   fqdn             = var.fqdn
-  auth_lambda_arns = module.oidc_lambda[*].function.qualified_arn
+  auth_lambda_arns = var.protected ? [module.oidc_lambda[0].function.qualified_arn] : toset([])
 
   api = local.apis
   # [ 
