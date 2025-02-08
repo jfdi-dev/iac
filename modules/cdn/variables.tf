@@ -17,6 +17,20 @@ variable "static" {
   }))
   default  = {}
   nullable = true
+
+  validation {
+    condition = length([
+      for o in values(var.static) : o
+      if o.path == null
+    ]) <= 1
+    error_message = "Only one `static` can be default (ie: has no `path`)."
+  }
+
+  validation {
+    condition     = length(keys(var.static)) - length(distinct([for o in values(var.static) : o.path])) == 0
+    error_message = "All static paths must be unique."
+  }
+
 }
 
 variable "api" {
@@ -34,15 +48,15 @@ variable "api" {
 
   validation {
     condition = length([
-      for o in concat(values(var.api), values(var.static)) : o
+      for o in values(var.api) : o
       if o.path == null
     ]) <= 1
-    error_message = "Only one `static` or `api` can be default (ie: has no `path`)."
+    error_message = "Only one `api` can be default (ie: has no `path`)."
   }
 
   validation {
-    condition     = length(concat(keys(var.api), keys(var.static))) - length(distinct([for o in concat(values(var.api), values(var.static)) : o.path])) == 0
-    error_message = "All paths must be unique."
+    condition     = length(keys(var.api)) - length(distinct([for o in values(var.api) : o.path])) == 0
+    error_message = "All api paths must be unique."
   }
 }
 

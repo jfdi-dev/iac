@@ -111,7 +111,7 @@ run "single_api_only_allowed" {
   }
 }
 
-run "multiple_api_requires_prefixes" {
+run "multiple_api_requires_paths" {
   command = plan
 
   providers = {
@@ -148,7 +148,7 @@ run "multiple_api_allows_only_one_default" {
     fqdn = "test.com"
     api = {
       one = {
-        prefix = "t"
+        path = "t"
         fqdn = "test.com"
       },
       two = {
@@ -260,7 +260,7 @@ run "multiple_static_requires_paths" {
   }
 
   expect_failures = [
-    var.api
+    var.static
   ]
 }
 
@@ -292,7 +292,7 @@ run "multiple_static_allows_only_one_default" {
   }
 
   expect_failures = [
-    var.api
+    var.static
   ]
 }
 
@@ -321,11 +321,11 @@ run "multiple_static_requires_unique_paths" {
   }
 
   expect_failures = [
-    var.api
+    var.static
   ]
 }
 
-run "multiple_static_with_unique_prefixes_allowed" {
+run "multiple_static_with_unique_paths_allowed" {
   command = plan
 
   providers = {
@@ -374,11 +374,7 @@ run "multiple_static_with_default_mount_allowed" {
   }
 }
 
-#
-# URL Rewrite Function Tests
-#
-
-run "x" {
+run "mixed_static_and_api_allows_both_default" {
   command = plan
   
   providers = {
@@ -389,11 +385,15 @@ run "x" {
   variables {
     fqdn = "test.com"
     static = {
-      one = { 
+      s = { 
         fqdn = "www.test.com"
         bucket_name = "www.test.com"
       }
     }
+    api = {
+      a = {
+        fqdn = "test.com"
+      }
+    }
   }
-
 }
