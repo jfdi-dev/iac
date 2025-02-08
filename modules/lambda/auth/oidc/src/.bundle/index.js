@@ -74254,7 +74254,6 @@ var middleware_default = (config) => {
   const app = (0, import_express.default)();
   app.use((0, import_express_openid_connect.auth)(config));
   app.all(/.+/, (req, res) => {
-    console.log(JSON.stringify(req, null, 2));
     if (req.oidc.isAuthenticated()) {
       console.log("authenticated: passthru");
       const invoke = (0, import_serverless_express.getCurrentInvoke)();
