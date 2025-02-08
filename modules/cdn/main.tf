@@ -9,10 +9,10 @@ locals {
 
   # Default origin is the only one without a path.
   # If all of them have a path, select the 'first' one.
-  default_static_origin = one([ for k, s in local.statics: s if s.path == null])
-  default_api_origin = one([ for k, a in local.apis: a if a.path == null])
-  default_origin = coalesce(local.default_static_origin, local.default_api_origin, element([for k, o in local.origins: o], 0))
-  
+  default_static_origin = one([for k, s in local.statics : s if s.path == null])
+  default_api_origin    = one([for k, a in local.apis : a if a.path == null])
+  default_origin        = coalesce(local.default_static_origin, local.default_api_origin, element([for k, o in local.origins : o], 0))
+
   domain_parts             = split(".", var.fqdn)
   domain_without_subdomain = slice(local.domain_parts, 1, length(local.domain_parts))
   zone_name                = join(".", local.domain_without_subdomain)

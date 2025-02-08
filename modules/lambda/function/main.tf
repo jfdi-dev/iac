@@ -13,11 +13,13 @@ locals {
     var.apigw_lambda ? ["apigateway.amazonaws.com"] : []
   )
 
+  default_service_policies = ["AWSLambdaBasicExecutionRole"]
+
   policies = {
     custom  = coalesce(module.manifest.settings.policies.custom, {})
     named   = coalesce(module.manifest.settings.policies.named, [])
     managed = coalesce(module.manifest.settings.policies.managed, [])
-    service = coalesce(module.manifest.settings.policies.service, [])
+    service = coalesce(merge(module.manifest.settings.policies.service, local.default_service_policies), [])
   }
 }
 
@@ -26,10 +28,7 @@ module "role_policies" {
 
   role = aws_iam_role.lambda_role.name
 
-  policies = merge(local.policies,
-    {
-      service = ["AWSLambdaBasicExecutionRole"]
-  })
+  policies = local.policies
 }
 
 data "aws_iam_policy_document" "assume_role" {
