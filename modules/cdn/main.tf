@@ -138,7 +138,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       iterator = edge_function
 
       content {
-        event_type   = "viewer-request"
+        event_type   = "origin-request"
         lambda_arn   = edge_function.value
         include_body = false
       }
