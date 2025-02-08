@@ -74254,6 +74254,7 @@ var middleware_default = (config) => {
   const app = (0, import_express.default)();
   app.use((0, import_express_openid_connect.auth)(config));
   app.all(/.+/, (req, res) => {
+    console.log(JSON.stringify(req, null, 2));
     if (req.oidc.isAuthenticated()) {
       console.log("authenticated: passthru");
       const invoke = (0, import_serverless_express.getCurrentInvoke)();
@@ -74285,7 +74286,7 @@ var configSecret = secretsManager.getSecretValue({
 var handler = async (event, context, callback) => {
   const passThru = event?.Records?.[0]?.cf?.request;
   const auth0Config = JSON.parse((await configSecret).SecretString || "");
-  const handler2 = (0, import_serverless_express2.default)({ app: middleware_default(auth0Config) });
+  const handler2 = (0, import_serverless_express2.default)({ app: middleware_default(auth0Config), logSettings: { level: "debug" } });
   const response = await handler2(event, context, callback);
   if (response?.status == 203) {
     return passThru;

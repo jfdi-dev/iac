@@ -28,7 +28,7 @@ const handler: CloudFrontRequestHandler = async (
   const passThru = event?.Records?.[0]?.cf?.request
   const auth0Config = JSON.parse((await configSecret).SecretString || '')
 
-  const handler = serverlessExpress({ app: app(auth0Config) })
+  const handler = serverlessExpress({ app: app(auth0Config), logSettings: { level: 'debug' } })
   const response = await handler(event, context, callback)
 
   if (response?.status == 203) {
