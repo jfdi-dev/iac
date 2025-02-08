@@ -128,17 +128,17 @@ resource "aws_cloudfront_distribution" "cdn" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    function_association {
-      event_type   = "viewer-request"
-      function_arn = aws_cloudfront_function.url_rewriter.arn
-    }
+    # function_association {
+    #   event_type   = "viewer-request"
+    #   function_arn = aws_cloudfront_function.url_rewriter.arn
+    # }
 
     dynamic "lambda_function_association" {
       for_each = var.auth_lambda_arns
       iterator = edge_function
 
       content {
-        event_type   = "origin-request"
+        event_type   = "viewer-request"
         lambda_arn   = edge_function.value
         include_body = false
       }
