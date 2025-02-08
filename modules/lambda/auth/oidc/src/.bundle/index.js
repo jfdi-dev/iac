@@ -74278,7 +74278,7 @@ var middleware_default = (config) => {
 // index.ts
 var import_node_fs = __toESM(require("node:fs"));
 var AuthConfigSecretId = import_node_fs.default.readFileSync("./secret").toString("utf8");
-var secretsManager = new import_client_secrets_manager.SecretsManager();
+var secretsManager = new import_client_secrets_manager.SecretsManager({ region: "eu-west-2" });
 var configSecret = secretsManager.getSecretValue({
   SecretId: AuthConfigSecretId
 });

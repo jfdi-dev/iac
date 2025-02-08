@@ -14,7 +14,8 @@ import fs from 'node:fs'
 
 const AuthConfigSecretId = fs.readFileSync('./secret').toString('utf8')
 
-const secretsManager = new SecretsManager()
+// TODO: unhardcode this...
+const secretsManager = new SecretsManager({ region: 'eu-west-2' })
 
 const configSecret = secretsManager.getSecretValue({
   SecretId: AuthConfigSecretId,
