@@ -3,19 +3,16 @@ locals {
   has_static = length(var.static) > 0
   has_api    = length(var.api) > 0
 
-  statics = { for k, s in var.static : k => merge(s, { type = "static" }) }
-  apis    = { for k, a in var.api : k => merge(a, { type = "api" }) }
+  statics = tomap({ for k, s in var.static : k => merge(s, { type = "static" }) })
+  apis    = tomap({ for k, a in var.api : k => merge(a, { type = "api" }) })
   origins = merge(local.statics, local.apis)
 
   # Default origin is the only one without a path.
   # If all of them have a path, select the 'first' one.
-  default_origin = coalesce(
-    try(one([
-      for o in local.origins : o if o.path == null
-    ]), null),
-    element(values(local.origins), 0)
-  )
-
+  default_static_origin = one([ for k, s in local.statics: s if s.path == null])
+  default_api_origin = one([ for k, a in local.apis: a if a.path == null])
+  default_origin = coalesce(local.default_static_origin, local.default_api_origin, element([for k, o in local.origins: o], 0))
+  
   domain_parts             = split(".", var.fqdn)
   domain_without_subdomain = slice(local.domain_parts, 1, length(local.domain_parts))
   zone_name                = join(".", local.domain_without_subdomain)
