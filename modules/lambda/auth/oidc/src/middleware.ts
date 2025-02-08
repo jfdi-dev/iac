@@ -12,6 +12,7 @@ export default (config: ConfigParams) => {
 
   // req.isAuthenticated is provided from the auth router
   app.all(/.+/, (req, res) => {
+    console.log(JSON.stringify(req, null, 2))
     if (req.oidc.isAuthenticated()) {
       console.log('authenticated: passthru')
       // authenticated: passthru
