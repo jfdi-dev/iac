@@ -19,7 +19,7 @@ locals {
     custom  = coalesce(module.manifest.settings.policies.custom, {})
     named   = coalesce(module.manifest.settings.policies.named, [])
     managed = coalesce(module.manifest.settings.policies.managed, [])
-    service = coalesce(merge(module.manifest.settings.policies.service, local.default_service_policies), [])
+    service = coalesce(concat(tolist(module.manifest.settings.policies.service), local.default_service_policies), [])
   }
 }
 
