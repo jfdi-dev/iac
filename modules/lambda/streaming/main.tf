@@ -2,8 +2,8 @@
 module "lambda" {
   source = "../function"
 
-  name = var.name
-  src  = var.src
+  name    = var.name
+  src     = var.src
   handler = "${var.name}/index.handler"
 }
 

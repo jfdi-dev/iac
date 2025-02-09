@@ -175,11 +175,11 @@ resource "aws_cloudfront_distribution" "cdn" {
       # And this forwards all but host header to origin...
       origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
       # Should `/api/` prefix here come from the `api` name (key)???
-      path_pattern             = "/api/${api.value.path != null ? "${api.value.path}" : "*"}"
-      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE", "POST"]
-      cached_methods           = ["GET", "HEAD"]
-      target_origin_id         = api.value.fqdn
-      viewer_protocol_policy   = "https-only"
+      path_pattern           = "/api/${api.value.path != null ? "${api.value.path}" : "*"}"
+      allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE", "POST"]
+      cached_methods         = ["GET", "HEAD"]
+      target_origin_id       = api.value.fqdn
+      viewer_protocol_policy = "https-only"
 
       dynamic "lambda_function_association" {
         for_each = var.auth_lambda_arns
