@@ -42,7 +42,7 @@ variable "apis" {
 
 variable "streaming" {
   type = map(object({
-    path = string
+    path = optional(string, null)
     src  = string
   }))
   nullable = true
