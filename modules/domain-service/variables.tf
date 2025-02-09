@@ -40,6 +40,16 @@ variable "apis" {
   default  = {}
 }
 
+variable "auth" {
+  type = object({
+    connections = set(string)
+  })
+  nullable = true
+  default = {
+    connections = []
+  }
+}
+
 variable "datastores" {
   type = map(object({
     type = string
@@ -47,9 +57,4 @@ variable "datastores" {
   }))
   nullable = true
   default  = {}
-}
-
-variable "manifest" {
-  # This will do for now
-  type = any
 }

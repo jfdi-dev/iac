@@ -32,11 +32,6 @@ module "project-context" {
   source = "../../project-context/reader"
 }
 
-locals {
-  config = merge(module.project-context.value, module.manifest.object)
-  fqdn   = "${local.config.artifact}.${module.project-context.env}.${local.config.tldp1}"
-}
-
 module "dr-from-env" {
   source = "../../dr-from-env"
 
@@ -51,9 +46,14 @@ module "dr" {
 
 # ^ Very boilerplate; Much wet
 
-# provider auth0 {
-
-# }
+locals {
+  config = merge(module.project-context.value, module.manifest.object)
+  fqdn   = "${local.config.artifact}.${module.project-context.env}.${local.config.tldp1}"
+  statics = {
+    for key, value in local.config.service.statics :
+    "${key}.${local.fqdn}" => merge(value, { short_name : key })
+  }
+}
 
 module "domain-service" {
   source = "../../domain-service"
@@ -70,12 +70,9 @@ module "domain-service" {
 
   disaster_recovery_level = module.dr.level
 
-  manifest = module.manifest
+  auth = local.config.auth
 
-  statics = {
-    for key, value in local.config.service.statics :
-    "${key}.${local.fqdn}" => merge(value, { short_name : key })
-  }
+  statics = local.statics
   apis = local.config.service.apis
   #datastores = local.config.service.datastores
 }
