@@ -4,6 +4,7 @@ module "lambda" {
 
   name = var.name
   src  = var.src
+  handler = "${var.name}/index.handler"
 }
 
 resource "aws_lambda_function_url" "url" {
