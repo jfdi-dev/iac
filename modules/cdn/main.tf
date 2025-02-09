@@ -107,6 +107,23 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
   }
 
+  dynamic "origin" {
+    for_each = local.streaming
+
+    content {
+      domain_name = replace(origin.value.url, "/^https?://([^/]*).*/", "$1")
+      origin_id   = origin.value.url
+
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
+
+    }
+  }
+
   aliases = [var.fqdn]
 
   enabled             = true
