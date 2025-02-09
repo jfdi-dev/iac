@@ -72,7 +72,8 @@ module "domain-service" {
 
   auth = local.config.auth
 
-  statics = local.statics
-  apis = local.config.service.apis
+  statics   = local.statics
+  apis      = local.config.service.apis
+  streaming = try(local.config.service.streaming, {})
   #datastores = local.config.service.datastores
 }

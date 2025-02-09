@@ -49,6 +49,15 @@ module "statics" {
   name = each.key
 }
 
+module "streaming_functions" {
+  source = "../lambda/streaming"
+
+  for_each = var.streaming
+
+  name = each.key
+  src  = "${path.root}/${each.value.src}"
+}
+
 locals {
   apis = {
     for key, value in var.apis :
@@ -63,6 +72,14 @@ locals {
     key => merge(
       value,
       module.statics[key],
+      { name : key }
+    )
+  }
+  streaming = {
+    for key, value in var.streaming :
+    key => merge(
+      value,
+      module.streaming_functions[key],
       { name : key }
     )
   }
@@ -120,6 +137,7 @@ module "cdn" {
   #       path = static.path
   #     }
   # ]
+  streaming = local.streaming
 }
 
 module "dns" {

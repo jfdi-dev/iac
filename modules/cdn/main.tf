@@ -3,9 +3,10 @@ locals {
   has_static = length(var.static) > 0
   has_api    = length(var.api) > 0
 
-  statics = tomap({ for k, s in var.static : k => merge(s, { type = "static" }) })
-  apis    = tomap({ for k, a in var.api : k => merge(a, { type = "api" }) })
-  origins = merge(local.statics, local.apis)
+  statics   = tomap({ for k, s in var.static : k => merge(s, { type = "static" }) })
+  apis      = tomap({ for k, a in var.api : k => merge(a, { type = "api" }) })
+  streaming = tomap({ for k, st in var.streaming : k => merge(st, { type = "streaming" }) })
+  origins   = merge(local.statics, local.apis)
 
   # Default origin is the only one without a path.
   # If all of them have a path, select the 'first' one.
@@ -179,6 +180,21 @@ resource "aws_cloudfront_distribution" "cdn" {
       #     forward = "all"
       #   }
       # }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = local.streaming
+    iterator = streaming
+
+    content {
+      cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+      origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+      path_pattern             = "/streaming/${streaming.value.path}"
+      allowed_methods          = ["GET"]
+      cached_methods           = []
+      target_origin_id         = streaming.value.url
+      viewer_protocol_policy   = "https-only"
     }
   }
 

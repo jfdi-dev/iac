@@ -40,6 +40,15 @@ variable "apis" {
   default  = {}
 }
 
+variable "streaming" {
+  type = map(object({
+    path = string
+    src  = string
+  }))
+  nullable = true
+  default  = {}
+}
+
 variable "auth" {
   type = object({
     connections = set(string)

@@ -60,6 +60,15 @@ variable "api" {
   }
 }
 
+variable "streaming" {
+  type = map(object({
+    url  = string
+    path = string
+  }))
+  default  = {}
+  nullable = true
+}
+
 # defo need a better way of doing this, 
 # but it will do for now...
 variable "auth_lambda_arns" {
