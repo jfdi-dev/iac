@@ -48,7 +48,7 @@ resource "aws_lambda_permission" "allow_cloudfront" {
 resource "aws_cloudfront_origin_access_control" "streaming_oac" {
   for_each = local.streaming
 
-  name                              = "st.oac.${each.value.url}"
+  name                              = "st.oac.${each.value.key}"
   origin_access_control_origin_type = "lambda"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
