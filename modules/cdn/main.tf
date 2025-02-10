@@ -32,6 +32,28 @@ resource "aws_cloudfront_origin_access_control" "static_oac" {
   }
 }
 
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
+resource "aws_lambda_permission" "allow_cloudfront" {
+  for_each = local.streaming
+
+  statement_id  = "AllowExecutionFromCloudFront"
+  action        = "lambda:InvokeFunction"
+  function_name = each.value.function_arn
+  principal     = "cloudfront.amazonaws.com"
+  source_arn    = "arn:aws:events:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
+}
+
+resource "aws_cloudfront_origin_access_control" "streaming_oac" {
+  for_each = local.streaming
+
+  name                              = "st.oac.${each.value.url}"
+  origin_access_control_origin_type = "lambda"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
 resource "aws_acm_certificate" "tls_cert" {
   provider = aws.tls
 
@@ -111,8 +133,10 @@ resource "aws_cloudfront_distribution" "cdn" {
     for_each = local.streaming
 
     content {
-      domain_name = replace(origin.value.url, "/^https?://([^/]*).*/", "$1")
-      origin_id   = origin.value.url
+      domain_name              = replace(origin.value.url, "/^https?://([^/]*).*/", "$1")
+      origin_access_control_id = aws_cloudfront_origin_access_control.streaming_oac[origin.key].id
+
+      origin_id = origin.value.url
 
       custom_origin_config {
         http_port              = 80
