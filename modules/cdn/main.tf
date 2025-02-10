@@ -32,7 +32,6 @@ resource "aws_cloudfront_origin_access_control" "static_oac" {
   }
 }
 
-data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 resource "aws_lambda_permission" "allow_cloudfront" {
@@ -42,7 +41,7 @@ resource "aws_lambda_permission" "allow_cloudfront" {
   action        = "lambda:InvokeFunction"
   function_name = each.value.function_arn
   principal     = "cloudfront.amazonaws.com"
-  source_arn    = "arn:aws:events:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
+  source_arn    = "arn:aws:events::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
 }
 
 resource "aws_cloudfront_origin_access_control" "streaming_oac" {
