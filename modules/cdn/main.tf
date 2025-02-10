@@ -37,11 +37,12 @@ data "aws_caller_identity" "current" {}
 resource "aws_lambda_permission" "allow_cloudfront" {
   for_each = local.streaming
 
-  statement_id  = "AllowExecutionFromCloudFront"
-  action        = "lambda:InvokeFunction"
-  function_name = each.value.function_arn
-  principal     = "cloudfront.amazonaws.com"
-  source_arn    = "arn:aws:events::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
+  statement_id           = "AllowExecutionFromCloudFront"
+  action                 = "lambda:InvokeFunction"
+  function_name          = each.value.function_arn
+  principal              = "cloudfront.amazonaws.com"
+  source_arn             = "arn:aws:events::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
+  function_url_auth_type = "AWS_IAM"
 }
 
 resource "aws_cloudfront_origin_access_control" "streaming_oac" {
