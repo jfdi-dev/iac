@@ -41,7 +41,7 @@ resource "aws_lambda_permission" "allow_cloudfront" {
   action                 = "lambda:InvokeFunctionUrl"
   function_name          = each.value.function_arn
   principal              = "cloudfront.amazonaws.com"
-  source_arn             = "arn:aws:events::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
+  source_arn             = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.cdn.id}"
   function_url_auth_type = "AWS_IAM"
 }
 
