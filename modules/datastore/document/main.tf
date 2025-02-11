@@ -36,10 +36,10 @@ data "aws_iam_policy_document" "datastore_access" {
     effect = "Allow"
     actions = [
       "dynamodb:PutItem",
-      "dynamodb:DeleteItem", 
-      "dynamodb:GetItem", 
-      "dynamodb:Scan", 
-      "dynamodb:Query", 
+      "dynamodb:DeleteItem",
+      "dynamodb:GetItem",
+      "dynamodb:Scan",
+      "dynamodb:Query",
       "dynamodb:UpdateItem"
     ]
     resources = [
@@ -50,7 +50,7 @@ data "aws_iam_policy_document" "datastore_access" {
 }
 
 resource "aws_iam_policy" "datastore_access" {
-  name = "access-datastore-${var.name}"
+  name   = "access-datastore-${var.name}"
   policy = data.aws_iam_policy_document.datastore_access.json
 }
 
