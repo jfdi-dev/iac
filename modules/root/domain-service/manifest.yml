@@ -2,6 +2,11 @@ artifact: app
 
 deployment:
   policies:
+    custom:
+      document-datastore-create:
+        - effect: Allow
+          actions: ['dynamodb:*']
+          resources: ['*']
     managed:
       - AmazonRoute53FullAccess
       - AWSLambda_FullAccess
@@ -10,7 +15,6 @@ deployment:
       - AmazonAPIGatewayAdministrator
       - AWSCertificateManagerFullAccess
       - CloudFrontFullAccess
-      - AmazonDynamoDBFullAccess
       # This is for Auth submodule:
       - SecretsManagerReadWrite
 
