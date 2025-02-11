@@ -5,3 +5,6 @@ runtime:
 concurrency:
   reserved: 250
   provisioned: 20
+integrations:
+  datastores:
+    - mydb

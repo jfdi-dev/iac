@@ -15,9 +15,12 @@ locals {
 
   default_service_policies = ["AWSLambdaBasicExecutionRole"]
 
+  context_policies = [ for c in try(module.manifest.integrations.contexts, []): "read-secret-context-secret-${c}" ]
+  datastore_policies = [ for d in try(module.manifest.integrations.datastores, []): "access-datastore-${d}"]
+
   policies = {
     custom  = coalesce(module.manifest.settings.policies.custom, {})
-    named   = coalesce(module.manifest.settings.policies.named, [])
+    named   = concat(coalesce(tolist(module.manifest.settings.policies.named), []), local.context_policies, local.datastore_policies)
     managed = coalesce(module.manifest.settings.policies.managed, [])
     service = coalesce(concat(tolist(module.manifest.settings.policies.service), local.default_service_policies), [])
   }

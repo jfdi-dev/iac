@@ -39,6 +39,10 @@ locals {
     for manifest in local.p5 : manifest.concurrency
     if contains(keys(manifest), "concurrency")
   ]...)
+  integrations = merge({}, [
+    for manifest in local.p5 : manifest.integrations
+    if contains(keys(manifest), "integrations")
+  ]...)
   policies = merge({
     managed : []
     named : []
@@ -49,8 +53,9 @@ locals {
   ]...)
   # Construct final manifest
   manifest = {
-    runtime     = local.runtime
-    concurrency = local.concurrency
-    policies    = local.policies
+    runtime      = local.runtime
+    concurrency  = local.concurrency
+    integrations = local.integrations
+    policies     = local.policies
   }
 }

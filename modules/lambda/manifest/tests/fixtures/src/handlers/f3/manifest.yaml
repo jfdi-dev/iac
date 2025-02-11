@@ -3,3 +3,6 @@ policies:
     - ManagedPolicy
   named:
     - NamedPolicy
+integrations:
+  datastores:
+    - otherdb

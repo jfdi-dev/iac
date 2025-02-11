@@ -31,6 +31,29 @@ resource "aws_dynamodb_table" "documents" {
   # }
 }
 
+data "aws_iam_policy_document" "datastore_access" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:DeleteItem", 
+      "dynamodb:GetItem", 
+      "dynamodb:Scan", 
+      "dynamodb:Query", 
+      "dynamodb:UpdateItem"
+    ]
+    resources = [
+      "${aws_dynamodb_table.documents.arn}",
+      "${aws_dynamodb_table.documents.arn}/index/*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "datastore_access" {
+  name = "access-datastore-${var.name}"
+  policy = data.aws_iam_policy_document.datastore_access.json
+}
+
 # resource "aws_kinesis_stream" "data_stream" {
 #   count       = var.stream ? 1 : 0
 #   name        = "${local.database_name}-changes"

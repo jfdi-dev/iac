@@ -3,3 +3,6 @@ runtime:
   memory_size: 1024
 concurrency:
   provisioned: 25
+integrations:
+  contexts:
+    - mysaas

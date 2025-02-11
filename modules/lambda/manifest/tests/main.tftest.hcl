@@ -56,6 +56,9 @@ run "manifest_construction_process" {
           reserved = 250
           provisioned = 20
         }
+        integrations = {
+          datastores = ["mydb"]
+        }
       },
       null,
       null
@@ -110,6 +113,9 @@ run "manifest_construction_process" {
         reserved = 250
         provisioned = 20
       }
+      integrations = {
+        datastores = ["mydb"]
+      }
       policies = {
         custom = {}
         managed = []
@@ -138,6 +144,10 @@ run "manifest_merging" {
       concurrency = {
         reserved = 250
         provisioned = 25
+      }
+      integrations = {
+        contexts = ["mysaas"]
+        datastores = ["mydb"]
       }
       policies = {
         custom = {}
@@ -168,6 +178,9 @@ run "manifest_permissions_merging" {
         reserved = 250
         provisioned = 20
       }
+      integrations = {
+        datastores = ["otherdb"]//, "mydb"] // <- Not yet supported, acts as override rather than concat.
+      }
       policies = {
         custom = {}
         managed = ["ManagedPolicy"]
@@ -192,6 +205,9 @@ run "manifest_can_be_json" {
       concurrency = {
         reserved = 300
         provisioned = 20
+      }
+      integrations = {
+        datastores = ["mydb"]
       }
       policies = {
         custom = {}
