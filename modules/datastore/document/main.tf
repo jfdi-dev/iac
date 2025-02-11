@@ -17,9 +17,10 @@ resource "aws_dynamodb_table" "documents" {
       for attribute in local.attributes :
       attribute.name => attribute.type
     }
+    iterator = att
     content {
-      name = each.key
-      type = each.value
+      name = att.key
+      type = att.value
     }
   }
 

@@ -19,8 +19,8 @@ module "dr" {
 module "datastore" {
   source = "../datastore"
 
-  relational    = var.datastores.relational
-  document = var.datastores.document
+  relational = var.datastores.relational
+  document   = var.datastores.document
 }
 
 module "apis" {
