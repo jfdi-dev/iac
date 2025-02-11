@@ -8,14 +8,17 @@
 # - rdbms-datastore
 #
 
-module "document-db" {
-  count = var.document != null ? 1 : 0
+module "document-dbs" {
+  for_each = var.document
 
   source = "./document"
+
+  name = each.key
+  keys = each.value.keys
 }
 
-module "rdbms-db" {
-  count = var.rdbms != null ? 1 : 0
+# module "relational-dbs" {
+#   for_each = var.relational
 
-  source = "./rdbms"
-}
+#   source = "./relational"
+# }

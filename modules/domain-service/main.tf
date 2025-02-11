@@ -16,19 +16,12 @@ module "dr" {
   level = var.disaster_recovery_level
 }
 
-# module "datastore" {
-#   source = "../datastore"
+module "datastore" {
+  source = "../datastore"
 
-#   for_each = var.datastores
-
-#   rdbms = {
-#     y = 1
-#   }
-
-#   document = {
-#     x = 1
-#   }  
-# }
+  relational    = var.datastores.relational
+  document = var.datastores.document
+}
 
 module "apis" {
   source = "../api/rest"

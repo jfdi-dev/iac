@@ -49,6 +49,15 @@ variable "streaming" {
   default  = {}
 }
 
+variable "datastores" {
+  type = object({
+    document   = optional(map(any))
+    relational = optional(map(any))
+  })
+  nullable = true
+  default  = {}
+}
+
 variable "auth" {
   type = object({
     connections = set(string)
@@ -57,13 +66,4 @@ variable "auth" {
   default = {
     connections = []
   }
-}
-
-variable "datastores" {
-  type = map(object({
-    type = string
-    src  = string
-  }))
-  nullable = true
-  default  = {}
 }
