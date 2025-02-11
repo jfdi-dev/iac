@@ -10,6 +10,7 @@ deployment:
       - AmazonAPIGatewayAdministrator
       - AWSCertificateManagerFullAccess
       - CloudFrontFullAccess
+      - AmazonDynamoDBFullAccess
       # This is for Auth submodule:
       - SecretsManagerReadWrite
 
