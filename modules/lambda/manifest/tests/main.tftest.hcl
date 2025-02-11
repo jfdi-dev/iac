@@ -69,14 +69,20 @@ run "manifest_construction_process" {
   #     {
   #       runtime = {
   #         name = "nodejs20.x"
-  #         timeout = 30
-  #         memory_size = 512
+  #         timeout = 5
+  #         memory_size = 128
   #       }
   #       concurrency = {
   #         provisioned = 0
   #         reserved = -1
   #       }
-  #       iam_role_statements = [ ]
+  #       environment = { }
+  #       policies = {
+  #         custom = { }
+  #         managed = [ ]
+  #         named = [ ]
+  #         service = [ ]
+  #       }
   #     },
   #     {
   #       runtime = {
@@ -88,13 +94,6 @@ run "manifest_construction_process" {
   #         provisioned = 20
   #         reserved = 250
   #       }
-  #       iam_role_statements = [
-  #         {
-  #           effect = "allow"
-  #           actions = ["s3:ListBuckets"]
-  #           resources = ["www.mybucket.com"]
-  #         }
-  #       ]
   #     }
   #   ]
   #   error_message = "p5 error: ${jsonencode(local.p5)}"

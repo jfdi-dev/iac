@@ -233,7 +233,7 @@ resource "aws_cloudfront_distribution" "cdn" {
       cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
       origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
       path_pattern             = "/streaming/${streaming.key}/*"
-      allowed_methods          = ["GET", "HEAD"]
+      allowed_methods          = ["GET", "HEAD", "OPTIONS", "PUT", "PATCH", "DELETE", "POST"]
       cached_methods           = ["GET", "HEAD"] # We actually don't want this at all, no?
       target_origin_id         = streaming.value.url
       viewer_protocol_policy   = "https-only"
