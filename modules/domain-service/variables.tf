@@ -60,10 +60,12 @@ variable "datastores" {
 
 variable "auth" {
   type = object({
-    connections = set(string)
+    connections    = set(string)
+    disable_signup = bool
   })
   nullable = true
   default = {
-    connections = []
+    connections    = []
+    disable_signup = false
   }
 }

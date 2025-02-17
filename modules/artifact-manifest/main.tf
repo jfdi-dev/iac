@@ -22,7 +22,8 @@ locals {
         service = []
       }
     }
-    secrets = []
+    secrets        = []
+    disable_signup = false
   }
   object = merge(local.defaults, module.manifest.object)
 }

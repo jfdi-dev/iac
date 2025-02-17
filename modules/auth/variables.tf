@@ -39,6 +39,11 @@ variable "connections" {
   default = ["database"]
 }
 
+variable "disable_signup" {
+  type    = bool
+  default = false
+}
+
 # variable roles {
 
 # }

@@ -22,6 +22,7 @@ override_module {
         connections = [
           "database"
         ]
+        disable_signup = false
       }
       service = {
         apis = {

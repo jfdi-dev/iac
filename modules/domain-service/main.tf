@@ -84,7 +84,8 @@ module "auth" {
 
   fqdn = var.fqdn
 
-  connections = var.auth.connections
+  connections    = var.auth.connections
+  disable_signup = var.auth.disable_signup
 
   # Limited to first api + first static, for now
   api    = local.apis[keys(local.apis)[0]]
