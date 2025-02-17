@@ -124,7 +124,7 @@ resource "auth0_connection" "database" {
     enabled_database_customization = false
     import_mode                    = false
     requires_username              = false
-    disable_signup                 = false
+    disable_signup                 = var.disable_signup
     password_history {
       enable = true
       size   = 3
