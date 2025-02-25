@@ -18,6 +18,8 @@ locals {
     apple : contains(var.connections, "apple")
     linkedin : contains(var.connections, "linkedin")
   }
+
+  roles = coalesce(var.roles, tomap({}))
 }
 
 data "auth0_tenant" "tenant" {
@@ -298,13 +300,25 @@ resource "aws_secretsmanager_secret_version" "auth0_config" {
 #   }
 # }
 
-# resource "auth0_role" "roles" {
-#   // 
+resource "auth0_role" "roles" {
+  for_each = local.roles
 
-#   for_each = var.roles
+  name = each.key
+}
 
-#   name = each.key
-# }
+resource "auth0_role_permissions" "role_permissions" {
+  for_each = local.roles
+
+  role_id = auth0_role.roles[each.key].id
+
+  dynamic "permissions" {
+    for_each = each.value
+    content {
+      name                       = permissions.value
+      resource_server_identifier = auth0_resource_server.api.identifier
+    }
+  }
+}
 
 # resource auth0_user god {
 #   // one user is created by default with full roles and perms

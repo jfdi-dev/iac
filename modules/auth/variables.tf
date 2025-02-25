@@ -44,6 +44,11 @@ variable "disable_signup" {
   default = false
 }
 
+variable "roles" {
+  type    = map(set(string))
+  default = {}
+}
+
 # variable roles {
 
 # }

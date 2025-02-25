@@ -86,6 +86,7 @@ module "auth" {
 
   connections    = var.auth.connections
   disable_signup = var.auth.disable_signup
+  roles          = var.auth.roles
 
   # Limited to first api + first static, for now
   api    = local.apis[keys(local.apis)[0]]

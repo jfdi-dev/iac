@@ -62,10 +62,12 @@ variable "auth" {
   type = object({
     connections    = set(string)
     disable_signup = bool
+    roles          = optional(map(set(string)))
   })
   nullable = true
   default = {
     connections    = []
     disable_signup = false
+    roles          = {}
   }
 }
