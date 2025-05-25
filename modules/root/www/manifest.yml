@@ -4,34 +4,20 @@ deployment:
     custom:
       deploy-spa:
         - effect: Allow
-          actions: 
+          actions:
             - s3:*
           resources:
-            - '*'
+            - "*"
         - effect: Allow
           actions:
-            - cloudfront:GetInvalidation
-            - cloudfront:CreateInvalidation
-            - cloudfront:CreateOriginAccessControl
-            - cloudfront:GetOriginAccessControl
-            - cloudfront:DeleteOriginAccessControl 
-            - cloudfront:CreateDistribution 
-            - cloudfront:UpdateDistribution 
-            - cloudfront:GetDistribution 
-            - cloudfront:DeleteDistribution 
-            - cloudfront:TagResource
-            - cloudfront:ListTagsForResource
-            - cloudfront:CreateFunction
-            - cloudfront:PublishFunction
-            - cloudfront:DescribeFunction
-            - cloudfront:GetFunction
+            - cloudfront:*
           resources:
-            - '*'
+            - "*"
         - effect: Allow
           actions:
             - acm:RequestCertificate
             - acm:DescribeCertificate
-            - acm:ListTagsForCertificate 
+            - acm:ListTagsForCertificate
             - acm:DeleteCertificate
           resources:
             - arn:aws:acm:us-east-1:*:certificate/*
@@ -49,4 +35,4 @@ deployment:
             - route53:ListTagsForResource
             - route53:GetChange
           resources:
-            - '*'
+            - "*"
