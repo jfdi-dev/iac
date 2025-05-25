@@ -31,8 +31,10 @@ module "role_policies" {
 
   role = aws_iam_role.deployment-role.name
 
+  
+
   policies = {
-    custom  = local.policies.custom
+    custom  = { for k,v in local.policies.custom: "${var.artifact_name}-${k}" => v }
     named   = setunion(local.policies.named, toset(["read-project-context"]))
     managed = local.policies.managed
     service = local.policies.service
