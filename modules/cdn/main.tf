@@ -281,9 +281,9 @@ resource "aws_s3_bucket_policy" "content" {
   policy   = data.aws_iam_policy_document.bucket_policy[each.key].json
 }
 
-resource "aws_cloudfront_function" "url_rewriter" {
-  name    = "url-rewriter"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = file("${path.module}/url-rewriter.js")
-}
+# resource "aws_cloudfront_function" "url_rewriter" {
+#   name    = "url-rewriter"
+#   runtime = "cloudfront-js-2.0"
+#   publish = true
+#   code    = file("${path.module}/url-rewriter.js")
+# }
