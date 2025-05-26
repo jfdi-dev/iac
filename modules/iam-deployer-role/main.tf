@@ -41,6 +41,7 @@ module "deployer-role" {
   project         = var.project
   tooling_account = var.tooling_account
   artifact_name   = "iam"
+  namespace       = false
 
   policies = {
     custom = {

@@ -11,6 +11,11 @@ variable "artifact_name" {
   type = string
 }
 
+variable "namespace" {
+  type = bool
+  default = false
+}
+
 variable "policies" {
   type = object({
     custom = optional(
